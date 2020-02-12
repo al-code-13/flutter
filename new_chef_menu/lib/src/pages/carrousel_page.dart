@@ -16,7 +16,7 @@ class CarrouselPage extends StatefulWidget {
 
 class _CarrouselPageState extends State<CarrouselPage> {
   void initState() {
-    super.initState(); 
+    super.initState();
     pageController = PageController(initialPage: 1, viewportFraction: 0.8);
   }
 
@@ -27,37 +27,42 @@ class _CarrouselPageState extends State<CarrouselPage> {
         title: Text("Carrousel"),
       ),
       body: PageView.builder(
-          controller: pageController,
-          itemCount: list.length,
-          itemBuilder: (context, position) {
-            return imageSlider(position);
-          }),
+        controller: pageController,
+        itemCount: list.length,
+        itemBuilder: (context, position) {
+          return imageSlider(position);
+        },
+      ),
     );
   }
 
   imageSlider(int position) {
-    return AnimatedBuilder(
-        animation: pageController,
-        builder: (context, widget) {
-          double value = 1;
-          if (pageController.position.haveDimensions) {
-            value = pageController.page - position;
-            value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
-          }
-          return Center(
-            child: SizedBox(
-              height: 200,
-              width: 300,
-              child: widget,
+    return Column(
+      children: <Widget>[
+        AnimatedBuilder(       
+          animation: pageController,
+          builder: (context, widget) {
+            double value = 1;
+            if (pageController.position.haveDimensions) {
+              value = pageController.page - position;
+              value = (1 - (value.abs() * 0.2)).clamp(0.0, 1.0);
+            }
+            return Center(
+              child: SizedBox(
+                height: Curves.easeInOut.transform(value) *200,
+                width: Curves.easeInOut.transform(value) *300,
+                child: widget,
+              ),
+            );
+          },
+          child: Container(
+            child: Image.network(
+              list[position],
+              fit: BoxFit.cover,
             ),
-          );
-        },
-        child: Container(
-          margin: EdgeInsets.all(10),
-          child: Image.network(
-            list[position],
-            fit: BoxFit.cover,
           ),
-        ));
+        ),
+      ],
+    );
   }
 }
