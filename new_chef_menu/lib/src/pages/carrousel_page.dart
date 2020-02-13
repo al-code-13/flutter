@@ -1,12 +1,32 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:new_chef_menu/src/pages/data.dart';
+import 'package:new_chef_menu/src/utils/icon_string_util.dart';
 
 PageController pageController;
-List<String> list = [
-  'https://images.deliveryhero.io/image/pedidosya/products/913429-f13eda90-fbe4-49a2-b082-133dbf1728cb.jpg?quality=80',
-  'https://images.deliveryhero.io/image/pedidosya/products/925070-a7515b47-7fc0-4248-8255-68fc05f8383a.jpg?quality=80',
-  'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+List list = [
+  'https://chefmenu.co/restaurantes/bogota/mr-lee/combo-cerdito-online.jpg',
+  'https://chefmenu.co/restaurantes/bogota/mr-lee/promo-combo-delicias-online.jpg',
+  'https://chefmenu.co/restaurantes/bogota/mr-lee/promo-bowl-beef-oriental.jpg'
 ];
+List<data> foodCategory = [
+  data(icon: "accessibility", category: "pizza1"),
+  data(icon: "bug_report", category: "pizza2"),
+  data(icon: "bug_report", category: "pizza3"),
+  data(icon: "bug_report", category: "pizza4"),
+  data(icon: "bug_report", category: "pizza5"),
+  data(icon: "bug_report", category: "pizza5"),
+  data(icon: "bug_report", category: "pizza5"),
+  data(icon: "bug_report", category: "pizza5"),
+  data(icon: "bug_report", category: "pizza5"),
+  data(icon: "bug_report", category: "pizza5"),
+  data(icon: "bug_report", category: "pizza5"),
+  data(icon: "bug_report", category: "pizza5"),
+];
+
+TextStyle stileFont = TextStyle(fontSize: 10);
+
+int currentPage = 0;
 
 class CarrouselPage extends StatefulWidget {
   CarrouselPage({Key key}) : super(key: key);
@@ -16,53 +36,83 @@ class CarrouselPage extends StatefulWidget {
 
 class _CarrouselPageState extends State<CarrouselPage> {
   void initState() {
+    pageController =
+        PageController(initialPage: currentPage, viewportFraction: 0.8);
     super.initState();
-    pageController = PageController(initialPage: 1, viewportFraction: 0.8);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Carrousel"),
-      ),
-      body: PageView.builder(
-        controller: pageController,
-        itemCount: list.length,
-        itemBuilder: (context, position) {
-          return imageSlider(position);
-        },
-      ),
-    );
-  }
-
-  imageSlider(int position) {
-    return Column(
-      children: <Widget>[
-        AnimatedBuilder(       
-          animation: pageController,
-          builder: (context, widget) {
-            double value = 1;
-            if (pageController.position.haveDimensions) {
-              value = pageController.page - position;
-              value = (1 - (value.abs() * 0.2)).clamp(0.0, 1.0);
-            }
-            return Center(
-              child: SizedBox(
-                height: Curves.easeInOut.transform(value) *200,
-                width: Curves.easeInOut.transform(value) *300,
-                child: widget,
-              ),
-            );
-          },
-          child: Container(
-            child: Image.network(
-              list[position],
-              fit: BoxFit.cover,
-            ),
-          ),
+        appBar: AppBar(
+          title: Text("Carrousel"),
         ),
-      ],
-    );
+        body: Column(
+          children: <Widget>[
+            CarouselSlider(
+              onPageChanged: (index) {
+                setState(() {
+                  currentPage = index;
+                });
+              },
+              enableInfiniteScroll: false,
+              // autoPlay: true,
+              height: 150,
+              items: list.map((i) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30.0),
+                        color: Colors.white,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: Container(
+                          padding: EdgeInsets.all(0),
+                          child: Card(
+                            child: Image.network(i),
+                          ),
+                        ),
+                      ),
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.symmetric(horizontal: 8),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
+            Container(
+              //decoration: BoxDecoration(color: Colors.black12),
+              margin: EdgeInsets.only(top: 20.0),
+              height: 148.0,
+              child: ListView.builder(
+                itemCount: foodCategory.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: <Widget>[
+                      Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32)),
+                        color: Colors.white,
+                        child: ClipOval(
+                          child: getIcon(
+                            foodCategory[index].icon,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        foodCategory[index].category,
+                        style: stileFont,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ));
   }
 }
