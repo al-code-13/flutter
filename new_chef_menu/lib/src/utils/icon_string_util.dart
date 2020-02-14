@@ -11,5 +11,5 @@ final _icons = <String, IconData>{
   'bug_report'   : Icons.bug_report
 };
 Icon getIcon (String iconName){
-  return Icon(_icons[iconName],size: 48,);
+  return Icon(_icons[iconName],size: 48);
 }
