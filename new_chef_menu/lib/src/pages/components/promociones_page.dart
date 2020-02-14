@@ -84,7 +84,7 @@ class _PromocionesPageState extends State<PromocionesPage> {
                           currentPage = index;
                         });
                       },
-                      enableInfiniteScroll: false,
+                      enableInfiniteScroll: true,
                       autoPlay: true,
                       height: 150,
                       items: list.map((i) {

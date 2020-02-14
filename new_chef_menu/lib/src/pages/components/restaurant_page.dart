@@ -49,6 +49,76 @@ List<dataRestaurant> restaurant = [
     rating: '4.9⭐',
   ),
   dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
+    title: 'Don Jediondo',
+    img:
+        'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
+    value: "3.500",
+    rating: '4.9⭐',
+  ),
+  dataRestaurant(
     title: 'Pan Pa Ya',
     img:
         'https://images.deliveryhero.io/image/pedidosya/products/841918-bcb04bf3-cf79-40ef-9b97-6cc7fee29215.jpg?quality=80',
