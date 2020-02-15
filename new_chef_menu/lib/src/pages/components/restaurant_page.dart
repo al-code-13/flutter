@@ -8,10 +8,10 @@ class RestaurantPage extends StatefulWidget {
 }
 
 TextStyle styleRest = TextStyle(
-  fontSize: 15,
+  fontSize: 16,
   fontWeight: FontWeight.bold,
 );
-TextStyle styleSubText = TextStyle(fontSize: 10, color: Colors.black87);
+TextStyle styleSubText = TextStyle(fontSize: 16, color: Colors.black54);
 List<dataRestaurant> restaurant = [
   dataRestaurant(
     title: 'Don Jediondo',
@@ -149,7 +149,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
                 ),
               ),
               Padding(
-                  padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(32),
                     child: Image.network(

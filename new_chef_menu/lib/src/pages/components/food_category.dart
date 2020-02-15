@@ -28,8 +28,6 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      //decoration: BoxDecoration(color: Colors.black12),
-      margin: EdgeInsets.only(top: 16.0),
       height: 100.0,
       child: ListView.builder(
         itemCount: foodCategory.length,
