@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:new_chef_menu_2/src/data/data.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
-import 'dart:io';
-
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
-
   @override
   _HomePageState createState() => _HomePageState();
 }
-
 //-------------------Aspect Radio_______________________//
 
 TextStyle styleFont = TextStyle(fontSize: 20, color: Colors.green);
@@ -21,42 +17,64 @@ List<typeFood> foodCategory = [
   typeFood(title: "Sub"),
   typeFood(title: "Ensaladas"),
   typeFood(title: "Otros"),
-  typeFood(title: "Beidas"),
-  typeFood(title: "Galletas"),
-  typeFood(title: "Beidas"),
-  typeFood(title: "Galletas"),
-  typeFood(title: "Beidas"),
+  typeFood(title: "Bebidas"),
   typeFood(title: "Galletas"),
 ];
-List<product> produto=[
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Atun",value: "10.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Atun",value: "10.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Atun",value: "10.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Atun",value: "10.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Atun",value: "10.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Atun",value: "10.200"),
-
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Pollo",value: "3.950"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Pollo",value: "3.950"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Pollo",value: "3.950"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Pollo",value: "3.950"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Pollo",value: "3.950"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Pollo",value: "3.950"),
-
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Carne",value: "8.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Carne",value: "8.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Carne",value: "8.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Carne",value: "8.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Carne",value: "8.200"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Sub Carne",value: "8.200"),
-  
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Red Velet",value: "18.900"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Red Velet",value: "18.900"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Red Velet",value: "18.900"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Red Velet",value: "18.900"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Red Velet",value: "18.900"),
-  product(img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",title: "Red Velet",value: "18.900"),
-  
+List<product> sub = [
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Sub Atun",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Sub Atun",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Sub Atun",
+      value: "10.200"),
+];
+List<product> ensaladas = [
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+];
+List<product> otros = [
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Sub Atun",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Sub Atun",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Sub Atun",
+      value: "10.200"),
+];
+List<product> bebidas = [
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "COCAAAA",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "COCAAAA",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "COCAAAA",
+      value: "10.200"),
 ];
 final _controller = ScrollController();
 final _height = 100.0;
@@ -69,15 +87,18 @@ class _HomePageState extends State<HomePage> {
         slivers: <Widget>[
           SliverAppBar(
             centerTitle: true,
-            //backgroundColor: Colors.transparent,
             pinned: true,
             title: Text("SubWay"),
             floating: false,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Image.network(
-                "https://i.ytimg.com/vi/WQSnHQ6Bxvk/maxresdefault.jpg",
-                fit: BoxFit.cover,
-              ),
+            flexibleSpace: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: Image.network(
+                    "https://i.ytimg.com/vi/WQSnHQ6Bxvk/maxresdefault.jpg",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
             ),
             expandedHeight: 200,
           ),
@@ -93,7 +114,6 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              // Spacer(flex: 2,),
                               Text(
                                 "SubWay",
                                 style: TextStyle(
@@ -173,7 +193,7 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(horizontal: 16),
               height: 50.0,
               child: ListView.builder(
-                controller: _controller,
+                //controller: _controller,
                 itemCount: foodCategory.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (_, int index) {
@@ -197,26 +217,117 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, i) => ListTile(
-                  leading: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg'),
-                        foregroundColor: Colors.green,
+            sliver: SliverToBoxAdapter(
+              child: SizedBox(
+                child: Container(
+                  //color: Colors.green,
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  height: sub.length.toDouble() * 100,
+                  child: PageView.custom(
+                    scrollDirection: Axis.horizontal,
+                    childrenDelegate: SliverChildListDelegate([
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: sub.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(sub[index].img),
+                                    foregroundColor: Colors.green,
+                                  ),
+                                  Text(sub[index].title),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[Text(sub[index].value)],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
                       ),
-                    ],
-                  ),
-                  title: Text('Sub Atun'),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[Text('11.500')],
+                      ListView.builder(
+                        itemCount: ensaladas.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(ensaladas[index].img),
+                                    foregroundColor: Colors.green,
+                                  ),
+                                  Text(ensaladas[index].title),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(ensaladas[index].value)
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      ListView.builder(
+                        itemCount: otros.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(otros[index].img),
+                                    foregroundColor: Colors.green,
+                                  ),
+                                  Text(otros[index].title),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(otros[index].value)
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      ListView.builder(
+                        controller: _controller,
+                        itemCount: bebidas.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            leading: Container(
+                              width: 122,
+                              child: CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(bebidas[index].img),
+                              ),
+                            ),
+                            title: Text(bebidas[index].title),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Text(bebidas[index].value),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ]),
                   ),
                 ),
-                childCount: 16,
               ),
             ),
           ),

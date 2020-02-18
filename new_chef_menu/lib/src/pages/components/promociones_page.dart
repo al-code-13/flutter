@@ -76,6 +76,7 @@ class _PromocionesPageState extends State<PromocionesPage> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return Card(
         elevation: 0,
         child: Column(
@@ -135,5 +136,62 @@ class _PromocionesPageState extends State<PromocionesPage> {
             ),
           ],
         ));
+=======
+    return Column(
+      children: <Widget>[
+        CarouselSlider(
+          onPageChanged: (index) {
+            setState(() {
+              currentPage = index;
+            });
+          },
+          enableInfiniteScroll: true,
+          autoPlay: true,
+          height: 150,
+          items: list.map((i) {
+            return Builder(
+              builder: (BuildContext context) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Container(
+                      padding: EdgeInsets.all(0),
+                      child: Card(
+                        child: Image.network(i),
+                      ),
+                    ),
+                  ),
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.symmetric(horizontal: 8),
+                );
+              },
+            );
+          }).toList(),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: map<Widget>(
+            list,
+            (index, url) {
+              return Container(
+                width: 8.0,
+                height: 8.0,
+                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: currentPage == index
+                        ? Color.fromRGBO(0, 128, 0, 1)
+                        : Color.fromRGBO(0, 0, 0, 0.4)),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+>>>>>>> master
   }
 }

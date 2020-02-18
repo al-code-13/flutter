@@ -16,10 +16,13 @@ class _FavoritosPageState extends State<FavoritosPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      //decoration: BoxDecoration(color: Colors.black12),
+      // decoration: BoxDecoration(color: Colors.black12),
       margin: EdgeInsets.only(top: 0),
-      //height: 124.0,
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 0),
+      // alignment: Alignment(0.0, 0.0),
+      // height: 1.0,
       child: ListView.builder(
+        padding: EdgeInsets.only(left: 0),
         itemCount: comidaImg.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
@@ -27,56 +30,64 @@ class _FavoritosPageState extends State<FavoritosPage> {
               padding: EdgeInsets.only(left: 8),
               child: Row(
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
-                        child: Container(
-                          padding: EdgeInsets.all(0),
-                          child: Card(
-                            elevation: 0,
-                            child: Image.network(
-                              comidaImg[0],
-                              width: 112,
-                              height: 112,
-                              fit: BoxFit.cover,
+                  Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: Column(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: Container(
+                            padding: EdgeInsets.all(0),
+                            child: Card(
+                              elevation: 0,
+                              child: Image.network(
+                                comidaImg[index],
+                                width: 112,
+                                height: 112,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Fogón de leña',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 24),
-                      ),
-                      Text(
-                        'Comida Colombiana',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.black38, fontSize: 16),
-                      ),
-                      Text(
-                        '30.500  -  4.9 ⭐',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.black38, fontSize: 16),
-                      ),
-                      Text(
-                        'ABIERTO',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Fogón de leña',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 24),
                         ),
-                      ),
-                    ],
+                        Text(
+                          'Comida Colombiana',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(color: Colors.black38, fontSize: 16),
+                        ),
+                        Text(
+                          '30.500  -  4.9 ⭐',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(color: Colors.black38, fontSize: 16),
+                        ),
+                        Text(
+                          'ABIERTO',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  VerticalDivider(),
+                  index != comidaImg.length - 1
+                      ? VerticalDivider()
+                      : Padding(padding: EdgeInsetsDirectional.only(end: 16)),
                 ],
               ));
         },

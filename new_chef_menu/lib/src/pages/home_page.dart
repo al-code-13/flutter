@@ -142,65 +142,44 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: Colors.grey,
       appBar: AppBar(
         title: Text("Calle 70 Nº8 -33"),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.all(0),
         child: CustomScrollView(
           slivers: <Widget>[
-            SliverGrid(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 500,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 2,
+            SliverToBoxAdapter(
+                child: SizedBox(
+              height: 180,
+              child: Center(
+                child: PromocionesPage(),
               ),
-              delegate: SliverChildBuilderDelegate(
-                (_, int index) {
-                  return PromocionesPage();
-                },
-                childCount: 1,
+            )),
+            SliverToBoxAdapter(
+                child: SizedBox(
+              height: 120,
+              child: Center(
+                child: FoodCategoryPage(),
               ),
-            ),
-            SliverGrid(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 500,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 2,
+            )),
+            SliverToBoxAdapter(
+                child: SizedBox(
+              height: 160,
+              child: Center(
+                child: FavoritosPage(),
               ),
-              delegate: SliverChildBuilderDelegate(
-                (_, int index) {
-                  return FoodCategoryPage();
-                },
-                childCount: 1,
-              ),
-            ),
-            SliverGrid(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 400,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 2,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (_, int index) {
-                  return FavoritosPage();
-                },
-                childCount: 1,
-              ),
-            ),
+            )),
             SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-
                 crossAxisCount: 2,
               ),
-
               delegate: SliverChildListDelegate(
                 restaurant
                     .map(
-                      (f) => Center(
+                      (f) => Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
@@ -213,14 +192,15 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             Padding(
-                                padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Image.network(
-                                    f.img,
-                                    width: 160,
-                                  ),
-                                )),
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.network(
+                                  f.img,
+                                  width: 160,
+                                ),
+                              ),
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
@@ -248,7 +228,8 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                    ).toList(),
+                    )
+                    .toList(),
               ),
             ),
           ],
