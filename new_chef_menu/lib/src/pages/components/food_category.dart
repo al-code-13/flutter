@@ -39,7 +39,6 @@ class _FoodCategoryPageState extends State<FoodCategoryPage> {
             padding: EdgeInsets.all(8),
             child: Container(
               alignment: Alignment(0.0, 0.0),
-              //width: 64,
               child: Column(
                 children: <Widget>[
                   Card(
