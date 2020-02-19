@@ -2,24 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:new_chef_menu_2/src/data/data.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+import 'package:new_chef_menu_2/src/pages/BLUR.dart';
+import 'package:new_chef_menu_2/src/pages/SABT.dart';
+import 'package:new_chef_menu_2/src/pages/detailRestaurant/detailRestaurant.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
-//-------------------Aspect Radio_______________________//
 
+//-------------------Aspect Radio_______________________//
+PageController pageController = PageController(
+  initialPage: 0,
+  keepPage: true,
+);
+
+int bottomSelectedIndex = 0;
+int currentPage = 0;
 TextStyle styleFont = TextStyle(fontSize: 20, color: Colors.green);
 TextStyle styleFont2 = TextStyle(fontSize: 16);
-List<typeFood> foodCategory = [
-  typeFood(title: "Ofertas"),
-  typeFood(title: "Sub"),
-  typeFood(title: "Ensaladas"),
-  typeFood(title: "Otros"),
-  typeFood(title: "Bebidas"),
-  typeFood(title: "Galletas"),
-];
+
 List<product> sub = [
   product(
       img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
@@ -47,19 +50,87 @@ List<product> ensaladas = [
       img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
       title: "Ensalada",
       value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
+  product(
+      img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
+      title: "Ensalada",
+      value: "10.200"),
 ];
 List<product> otros = [
   product(
       img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
-      title: "Sub Atun",
+      title: "otros",
       value: "10.200"),
   product(
       img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
-      title: "Sub Atun",
+      title: "otros",
       value: "10.200"),
   product(
       img: "https://topdelis.com/static/platillos/n/b6608930_943920000_n.jpg",
-      title: "Sub Atun",
+      title: "otros",
       value: "10.200"),
 ];
 List<product> bebidas = [
@@ -76,8 +147,15 @@ List<product> bebidas = [
       title: "COCAAAA",
       value: "10.200"),
 ];
-final _controller = ScrollController();
-final _height = 100.0;
+
+List<typeFood> foodCategory = [
+  //typeFood(title: "Ofertas", ),
+  typeFood(title: "Sub", lista: sub),
+  typeFood(title: "Ensaladas", lista: ensaladas),
+  typeFood(title: "Otros", lista: otros),
+  typeFood(title: "Bebidas", lista: bebidas),
+  //typeFood(title: "Galletas"),
+];
 
 class _HomePageState extends State<HomePage> {
   @override
@@ -86,19 +164,24 @@ class _HomePageState extends State<HomePage> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
+            stretch: true,
             centerTitle: true,
+            primary: true,
             pinned: true,
-            title: Text("SubWay"),
+            stretchTriggerOffset: 20,
             floating: false,
-            flexibleSpace: Stack(
-              children: <Widget>[
-                Positioned.fill(
+            title: SABT(
+              child: Text("Pan Pa Ya"),
+            ),
+            flexibleSpace: Positioned(
+              child: BLUR(
+                child: Positioned.fill(
                   child: Image.network(
-                    "https://i.ytimg.com/vi/WQSnHQ6Bxvk/maxresdefault.jpg",
+                    "https://chefmenu.co/restaurantes/bogota/pan-pa-ya/logo.jpg",
                     fit: BoxFit.cover,
                   ),
                 ),
-              ],
+              ),
             ),
             expandedHeight: 200,
           ),
@@ -131,7 +214,7 @@ class _HomePageState extends State<HomePage> {
                                   itemSize: 30.0,
                                   direction: Axis.horizontal,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         )
@@ -191,23 +274,43 @@ class _HomePageState extends State<HomePage> {
             header: Container(
               color: Colors.white,
               padding: EdgeInsets.symmetric(horizontal: 16),
-              height: 50.0,
+              height: 60.0,
               child: ListView.builder(
                 //controller: _controller,
                 itemCount: foodCategory.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (_, int index) {
                   return GestureDetector(
-                    onTap: () => _onTaps(index),
+                    onTap: () {
+                      pageController.animateToPage(index,
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.linear);
+                      currentPage = index;
+                      print(currentPage);
+                    },
                     child: Padding(
                       padding: EdgeInsets.all(8),
                       child: Container(
                         alignment: Alignment(0.0, 0.0),
                         child: Column(
                           children: <Widget>[
-                            Text(
-                              foodCategory[index].title,
-                              style: styleFont,
+                            ButtonBar(
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                          color: index == currentPage
+                                              ? Colors.green
+                                              : Colors.white),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    foodCategory[index].title,
+                                    style: styleFont,
+                                  ),
+                                )
+                              ],
                             ),
                           ],
                         ),
@@ -222,110 +325,19 @@ class _HomePageState extends State<HomePage> {
                 child: Container(
                   //color: Colors.green,
                   padding: EdgeInsets.symmetric(horizontal: 16),
-                  height: sub.length.toDouble() * 100,
-                  child: PageView.custom(
-                    scrollDirection: Axis.horizontal,
-                    childrenDelegate: SliverChildListDelegate([
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: sub.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(sub[index].img),
-                                    foregroundColor: Colors.green,
-                                  ),
-                                  Text(sub[index].title),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[Text(sub[index].value)],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      ListView.builder(
-                        itemCount: ensaladas.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(ensaladas[index].img),
-                                    foregroundColor: Colors.green,
-                                  ),
-                                  Text(ensaladas[index].title),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text(ensaladas[index].value)
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      ListView.builder(
-                        itemCount: otros.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(otros[index].img),
-                                    foregroundColor: Colors.green,
-                                  ),
-                                  Text(otros[index].title),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text(otros[index].value)
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      ListView.builder(
-                        controller: _controller,
-                        itemCount: bebidas.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            leading: Container(
-                              width: 122,
-                              child: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(bebidas[index].img),
-                              ),
-                            ),
-                            title: Text(bebidas[index].title),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Text(bebidas[index].value),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ]),
+                  height: MediaQuery.of(context).size.height,
+                  child: PageView.builder(
+                    itemCount: foodCategory.length,
+                    controller: pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        currentPage = index;
+                        print(currentPage);
+                      });
+                    },
+                    itemBuilder: (_, int index) {
+                      return DetailRestaurant(lista: foodCategory[index].lista);
+                    },
                   ),
                 ),
               ),
@@ -334,11 +346,5 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-  }
-
-  void _onTaps(int i) {
-    print(i);
-    _controller.animateTo(_height * 10,
-        duration: Duration(seconds: 2), curve: Curves.fastOutSlowIn);
   }
 }

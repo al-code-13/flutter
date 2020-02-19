@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class typeFood{
   String title;
-  typeFood({this.title});
+  List<product> lista;
+  typeFood({@required this.title, @required this.lista});
 }
 class product{
   String img;
