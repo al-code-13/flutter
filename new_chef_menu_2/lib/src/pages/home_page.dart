@@ -17,7 +17,7 @@ PageController pageController = PageController(
   initialPage: 0,
   keepPage: true,
 );
-
+TextStyle styles = TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0);
 int bottomSelectedIndex = 0;
 int currentPage = 0;
 TextStyle styleFont = TextStyle(fontSize: 20, color: Colors.green);
@@ -197,10 +197,32 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                "SubWay",
-                                style: TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              GestureDetector(
+                                child: Text(
+                                  "SubWay",
+                                  style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(8),
+                                            ),
+                                          ),
+                                          contentPadding: EdgeInsets.all(0.0),
+                                          title: Text(
+                                            "Pan Pa Ya",
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          content: getServices(),
+                                        );
+                                      });
+                                },
                               ),
                               Padding(
                                 padding: EdgeInsets.only(left: 16),
@@ -286,7 +308,6 @@ class _HomePageState extends State<HomePage> {
                           duration: Duration(milliseconds: 500),
                           curve: Curves.linear);
                       currentPage = index;
-                      print(currentPage);
                     },
                     child: Padding(
                       padding: EdgeInsets.all(8),
@@ -343,6 +364,141 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  getServices() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text("brunch, diners americanos y pizza"),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Icon(
+                  Icons.add,
+                  size: 24,
+                ),
+                Text("Desayunos, Pizza, Sandwich, Panaderia",
+                    style: TextStyle(fontSize: 14)),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Icon(Icons.calendar_today, size: 32),
+                ],
+              ),
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text("Sabado", style: TextStyle(fontSize: 14)),
+                          SizedBox(
+                            width: 24,
+                          ),
+                          Text("07:00 AM a 21:00 PM",
+                              style: TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text("Sabado", style: TextStyle(fontSize: 14)),
+                          SizedBox(
+                            width: 24,
+                          ),
+                          Text("07:00 AM a 21:00 PM",
+                              style: TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text("Sabado", style: TextStyle(fontSize: 14)),
+                          SizedBox(
+                            width: 24,
+                          ),
+                          Text("07:00 AM a 21:00 PM",
+                              style: TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text("Sabado", style: TextStyle(fontSize: 14)),
+                          SizedBox(
+                            width: 24,
+                          ),
+                          Text("07:00 AM a 21:00 PM",
+                              style: TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text("Sabado", style: TextStyle(fontSize: 14)),
+                          SizedBox(
+                            width: 24,
+                          ),
+                          Text("07:00 AM a 21:00 PM",
+                              style: TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text("Sabado", style: TextStyle(fontSize: 14)),
+                          SizedBox(
+                            width: 24,
+                          ),
+                          Text("07:00 AM a 21:00 PM",
+                              style: TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text("Sabado", style: TextStyle(fontSize: 14)),
+                          SizedBox(
+                            width: 24,
+                          ),
+                          Text("07:00 AM a 21:00 PM",
+                              style: TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
         ],
       ),
     );

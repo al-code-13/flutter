@@ -26,7 +26,7 @@ class MenuPage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32)),
                       ),
-                      title: Text("Escoja el servicio que desea obtener"),
+                      title: Text("Pan Pa Ya"),
                       content: getServices(),
                     );
                   });

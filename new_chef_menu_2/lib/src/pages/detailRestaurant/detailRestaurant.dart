@@ -22,13 +22,12 @@ class _DetailRestaurantState extends State<DetailRestaurant> {
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              // crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Column(
                   children: <Widget>[
                     Container(
-                      height: 104,
-                      width: 104,
+                      height: 112,
+                      width: 112,
                       child: CircleAvatar(
                         backgroundImage:
                             NetworkImage(widget.lista[index].img, scale: 200),
@@ -37,36 +36,25 @@ class _DetailRestaurantState extends State<DetailRestaurant> {
                   ],
                 ),
                 Column(
-                  //crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.lista[index].title,
-                          style:
-                              TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text("Delicioso sandwich de atun"),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Text(widget.lista[index].value),
-                      ],
-                    ),
+                    Text("Sub de atun",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 24),),
+                    Text("descripcion de  el sandwuichito"),
                   ],
+                ),
+                Container(
+                  alignment: Alignment.bottomRight,
+                  height: 112,
+                  child: Text("11.500"),
                 ),
               ],
             ),
-            Divider(),
+            index != widget.lista.length
+                ? Divider()
+                : Padding(
+                    padding: EdgeInsetsDirectional.only(bottom: 2),
+                  ),
           ],
         );
       },

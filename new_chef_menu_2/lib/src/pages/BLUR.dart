@@ -13,7 +13,7 @@ class BLUR extends StatefulWidget {
 }
 
 class _BLURState extends State<BLUR> {
-  final max = 5;
+  final max = 10;
 
   ScrollPosition _position;
   double blur = 0;
@@ -45,9 +45,9 @@ class _BLURState extends State<BLUR> {
     final FlexibleSpaceBarSettings settings =
         context.inheritFromWidgetOfExactType(FlexibleSpaceBarSettings);
 
-    double max = settings.maxExtent - settings.minExtent;
+    double maxReal = settings.maxExtent - settings.minExtent;
     double current = settings.currentExtent - settings.minExtent;
-    double newBlur = 5 - ((current * 5) / max);
+    double newBlur = max - ((current * max) / maxReal);
     setState(() {
       blur = newBlur;
     });
