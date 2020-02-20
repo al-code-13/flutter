@@ -147,7 +147,15 @@ List<product> bebidas = [
       title: "COCAAAA",
       value: "10.200"),
 ];
-
+List<horario> horarios = [
+  horario(dia: "Lunes", horaInicio: "07:00 AM a ", horaFin: "21:00 PM"),
+  horario(dia: "Martes", horaInicio: "07:00 AM a ", horaFin: "21:00 PM"),
+  horario(dia: "Miercoles", horaInicio: "07:00 AM a ", horaFin: "21:00 PM"),
+  horario(dia: "Jueves", horaInicio: "07:00 AM a ", horaFin: "21:00 PM"),
+  horario(dia: "Viernes", horaInicio: "07:00 AM a ", horaFin: "21:00 PM"),
+  horario(dia: "Sabado", horaInicio: "07:00 AM a ", horaFin: "21:00 PM"),
+  horario(dia: "Domingo", horaInicio: "07:00 AM a ", horaFin: "21:00 PM"),
+];
 List<typeFood> foodCategory = [
   //typeFood(title: "Ofertas", ),
   typeFood(title: "Sub", lista: sub),
@@ -376,18 +384,15 @@ class _HomePageState extends State<HomePage> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text("brunch, diners americanos y pizza"),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Icon(
-                  Icons.add,
-                  size: 24,
-                ),
-                Text("Desayunos, Pizza, Sandwich, Panaderia",
-                    style: TextStyle(fontSize: 14)),
-              ],
+          ListTile(
+            leading: Icon(
+              Icons.add,
+              size: 24,
+            ),
+            title: Text(
+              "Desayunos, Pizza, Sandwich, Panaderia",
+              style: TextStyle(fontSize: 12),
+              textAlign: TextAlign.left,
             ),
           ),
           Row(
@@ -397,107 +402,66 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Icon(Icons.calendar_today, size: 32),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Icon(Icons.calendar_today, size: 32),
+                  )
                 ],
               ),
               Container(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("Sabado", style: TextStyle(fontSize: 14)),
-                          SizedBox(
-                            width: 24,
+                child: Padding(
+                  padding: EdgeInsetsDirectional.only(end: 16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        height: 130,
+                        width: 250,
+                        child: ListView.builder(
+                          itemCount: horarios.length,
+                          itemBuilder: (_,index){
+                          return Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(horarios[index].dia, style: TextStyle(fontSize: 14)),
+                              SizedBox(
+                                width: 24,
+                              ),
+                              Text(horarios[index].horaInicio+horarios[index].horaFin,
+                                  style: TextStyle(fontSize: 14)),
+                            ],
                           ),
-                          Text("07:00 AM a 21:00 PM",
-                              style: TextStyle(fontSize: 14)),
-                        ],
+                        );
+                        }),
                       ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("Sabado", style: TextStyle(fontSize: 14)),
-                          SizedBox(
-                            width: 24,
-                          ),
-                          Text("07:00 AM a 21:00 PM",
-                              style: TextStyle(fontSize: 14)),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("Sabado", style: TextStyle(fontSize: 14)),
-                          SizedBox(
-                            width: 24,
-                          ),
-                          Text("07:00 AM a 21:00 PM",
-                              style: TextStyle(fontSize: 14)),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("Sabado", style: TextStyle(fontSize: 14)),
-                          SizedBox(
-                            width: 24,
-                          ),
-                          Text("07:00 AM a 21:00 PM",
-                              style: TextStyle(fontSize: 14)),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("Sabado", style: TextStyle(fontSize: 14)),
-                          SizedBox(
-                            width: 24,
-                          ),
-                          Text("07:00 AM a 21:00 PM",
-                              style: TextStyle(fontSize: 14)),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("Sabado", style: TextStyle(fontSize: 14)),
-                          SizedBox(
-                            width: 24,
-                          ),
-                          Text("07:00 AM a 21:00 PM",
-                              style: TextStyle(fontSize: 14)),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("Sabado", style: TextStyle(fontSize: 14)),
-                          SizedBox(
-                            width: 24,
-                          ),
-                          Text("07:00 AM a 21:00 PM",
-                              style: TextStyle(fontSize: 14)),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               )
             ],
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  "Formas de pago",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.monetization_on),
+                    Icon(Icons.card_membership),
+                  ],
+                )
+              ],
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.map),
+            title: Text("KR 5 No 70 A -45"),
           )
         ],
       ),

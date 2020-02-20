@@ -11,3 +11,9 @@ class product{
   String value;
   product({this.img,this.title,this.value});
 }
+class horario{
+  String dia;
+  String horaInicio;
+  String horaFin;
+  horario({this.dia,this.horaInicio,this.horaFin});
+}
