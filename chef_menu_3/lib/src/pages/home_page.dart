@@ -1,8 +1,8 @@
-import 'dart:async';
-
 import 'package:chef_menu_3/src/data/data.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -15,16 +15,17 @@ PageController pageController = PageController(
   initialPage: 0,
   keepPage: true,
 );
+
 int totalValue;
 int allValue = 0;
+dynamic hora;
 int currentPage = 0;
-Color primaryColors = Colors.white;
+final format = DateFormat("HH:mm");
+
 TextStyle styleProduct = TextStyle(fontSize: 20.0);
 TextStyle titulos = TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
 bool acept = false;
 bool entregaInmediata = false;
-final Completer<WebViewController> _webController =
-    Completer<WebViewController>();
 
 List<Order> orders = [
   Order(
@@ -108,7 +109,7 @@ class _HomePageState extends State<HomePage>
         ),
         body: PageView(
           controller: pageController,
-          //physics: new NeverScrollableScrollPhysics(), ---------------//
+          physics: new NeverScrollableScrollPhysics(),
           onPageChanged: (i) {
             _progressAnimcontroller.reset();
             _setProgressAnim(maxWidth, i + 1);
@@ -224,7 +225,7 @@ class _HomePageState extends State<HomePage>
                                                 orders[index].count;
                                             orders[index].totalValue =
                                                 totalValue;
-                                                allValue += totalValue;
+                                            allValue += totalValue;
                                           });
                                         },
                                         child: Container(
@@ -252,7 +253,6 @@ class _HomePageState extends State<HomePage>
                                         : Text("\$" +
                                             orders[index].value.toString()),
                                   ),
-                                  
                                 ],
                               ),
                             ),
@@ -301,7 +301,36 @@ class _HomePageState extends State<HomePage>
                           }),
                       Text("Entrega inmediata"),
                     ],
-                  )
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Text(
+                        "Seleccione Hora:",
+                        textAlign: TextAlign.center,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 120),
+                        child: Container(
+                          color: Colors.green,
+                          child: DateTimeField(
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white,fontSize: 20),
+                            maxLengthEnforced: true,
+                            format: format,
+                            onShowPicker: (context, currentValue) async {
+                              final time = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.fromDateTime(
+                                  currentValue ?? DateTime.now(),
+                                ),
+                              );
+                              return DateTimeField.convert(time);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -433,7 +462,7 @@ class _HomePageState extends State<HomePage>
                           }),
                       Text("Si, he leido y acepto los",
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 10,
                           )),
                       GestureDetector(
                         onTap: () {
@@ -445,7 +474,10 @@ class _HomePageState extends State<HomePage>
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(16)),
                                   ),
-                                  title: Text("Terminos y condiciones"),
+                                  title: Text("Terminos y condiciones",
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                      )),
                                   //content: //getServices(),
                                 );
                               });
@@ -458,7 +490,7 @@ class _HomePageState extends State<HomePage>
                       ),
                       Text("de Chefmenu.",
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 10,
                           )),
                     ],
                   ),
@@ -468,6 +500,7 @@ class _HomePageState extends State<HomePage>
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
+          elevation: 0,
           items: [
             BottomNavigationBarItem(
                 icon: Text("Descuento"), title: Text("Total:")),
@@ -477,12 +510,13 @@ class _HomePageState extends State<HomePage>
             ),
             BottomNavigationBarItem(
               icon: Text("\$0"),
-              title: Text("\$"+allValue.toString()),
+              title: Text("\$" + allValue.toString()),
             )
           ],
         ),
       ),
       bottomNavigationBar: RaisedButton(
+        elevation: 0,
         onPressed: () {
           pageController.animateToPage(currentPage,
               duration: Duration(milliseconds: 500), curve: Curves.linear);
@@ -491,16 +525,6 @@ class _HomePageState extends State<HomePage>
         color: Colors.yellow,
         child: Text("SIGUIENTE"),
       ),
-    );
-  }
-
-  getServices() {
-    return WebView(
-      initialUrl: "https://www.chefmenu.co/tyc2018",
-      javascriptMode: JavascriptMode.disabled,
-      onWebViewCreated: (WebViewController webViewController) {
-        _webController.complete(webViewController);
-      },
     );
   }
 }
