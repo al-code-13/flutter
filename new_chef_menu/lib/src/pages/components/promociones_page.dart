@@ -76,7 +76,6 @@ class _PromocionesPageState extends State<PromocionesPage> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     return Card(
         elevation: 0,
         child: Column(
@@ -136,7 +135,6 @@ class _PromocionesPageState extends State<PromocionesPage> {
             ),
           ],
         ));
-=======
     return Column(
       children: <Widget>[
         CarouselSlider(
@@ -192,6 +190,5 @@ class _PromocionesPageState extends State<PromocionesPage> {
         ),
       ],
     );
->>>>>>> master
   }
 }
