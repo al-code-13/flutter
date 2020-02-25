@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "709317531767",
+    "firebase_url": "https://loginflutterchef.firebaseio.com",
+    "project_id": "loginflutterchef",
+    "storage_bucket": "loginflutterchef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709317531767:android:c5b742797f5bf4a4170e72",
+        "android_client_info": {
+          "package_name": "com.example.chef_menu_login_bloc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709317531767-8ejt15s26pis660t7s8jg88f1jth47ve.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chef_menu_login_bloc",
+            "certificate_hash": "f92e9f92688d9fb7a575ff25b17268aaa6220efb"
+          }
+        },
+        {
+          "client_id": "709317531767-b7js5ugrje3ah30p2ao50ilthdb28kjb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCG_G23ou-03QZtVJaOM65T2NEtEPnmhPM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709317531767-b7js5ugrje3ah30p2ao50ilthdb28kjb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

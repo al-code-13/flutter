@@ -6,6 +6,8 @@ class LoginBloc with Validators {
   final _emailController = BehaviorSubject<String>();
   final _passwordController = BehaviorSubject<String>();
 
+
+
   // Recuperar datos del Stream
   Stream<String> get emailStream =>
       _emailController.stream.transform(validarEmail);
@@ -19,6 +21,10 @@ class LoginBloc with Validators {
   Function get changeEmail => _emailController.sink.add;
   Function get changePassword => _passwordController.sink.add;
 
+  // Ultimo valor ingresado
+
+  String get email => _emailController.value;
+  String get password => _passwordController.value;
   dispose() {
     _emailController?.close();
     _passwordController?.close();

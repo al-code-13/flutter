@@ -127,12 +127,17 @@ class LoginPage extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           elevation: 0,
           color: Colors.deepPurple,
-          onPressed: snapshot.hasData? (){}:null,
+          onPressed: snapshot.hasData? ()=> _login(context ,bloc):null,
         );
       },
     );
   }
-
+  _login(BuildContext context, LoginBloc bloc){
+    print('Email: ${bloc.email}');
+    print('Password: ${bloc.password}');
+    Navigator.pushReplacementNamed(context, 'home');
+    
+  }
   Widget _crearFondo(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final fondoMorado = Container(
