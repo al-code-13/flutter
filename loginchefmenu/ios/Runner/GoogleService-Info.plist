@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>39328973617-1tp2u3ahfnpotnucot0v8obf568kogkt.apps.googleusercontent.com</string>
+	<string>39328973617-6p4l9u5nkmmskl8muesomoqmi560v0io.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.39328973617-1tp2u3ahfnpotnucot0v8obf568kogkt</string>
+	<string>com.googleusercontent.apps.39328973617-6p4l9u5nkmmskl8muesomoqmi560v0io</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>39328973617-k0uqrecbnbb7fporbm4aeqs77mgte1d0.apps.googleusercontent.com</string>
+	<string>39328973617-5kk6mmu11lt3orc85scmo3ajje07bo8k.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyB-W3csNhBJ0RrLYp7VPs4bCD2DxODtJwk</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,23 +15,23 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>loginchefmenu</string>
+	<string>com.example.loginchefmenu</string>
 	<key>PROJECT_ID</key>
 	<string>flutterlogin-80ebe</string>
 	<key>STORAGE_BUCKET</key>
 	<string>flutterlogin-80ebe.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:39328973617:ios:7aadf9ac46b3eff8f22610</string>
+	<string>1:39328973617:ios:59a356817351c106f22610</string>
 	<key>DATABASE_URL</key>
 	<string>https://flutterlogin-80ebe.firebaseio.com</string>
 </dict>

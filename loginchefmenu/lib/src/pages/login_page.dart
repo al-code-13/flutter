@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 import '../bloc/login_bloc.dart';
 import '../bloc/provider.dart';
-
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,73 +15,234 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final facebookLogin = FacebookLogin();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   FirebaseAuth _auth = FirebaseAuth.instance;
+
   bool isLogged = false;
+  String currentSesion;
+  bool isRegister = true;
 
   FirebaseUser myUser;
-  String image;
-  String name;
+  AuthCredential oldUser;
+  List<AuthCredential> credentials;
   String email;
+  String password;
+  //--------------INICIO DE SESION CON FACEBOOK----------------------------------------------------------------------------
   Future<FirebaseUser> _loginWithFacebook() async {
-    final facebookLogin = FacebookLogin();
     final result = await facebookLogin.logIn(['email']);
-    debugPrint(result.status.toString());
-    if (result.status == FacebookLoginStatus.error) {
-      debugPrint(result.errorMessage);
-    }
 
-    if (result.status == FacebookLoginStatus.loggedIn) {
-      final FacebookLoginResult facebookLoginResult = await facebookLogin.logIn(['email', 'public_profile']);
-      FacebookAccessToken facebookAccessToken = facebookLoginResult.accessToken;
-      AuthCredential authCredential = FacebookAuthProvider.getCredential(accessToken: facebookAccessToken.token);
-      FirebaseUser user;
-      user = (await _auth.signInWithCredential(authCredential)).user;
-      return user;
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final FacebookLoginResult facebookLoginResult =
+            await facebookLogin.logIn(['email', 'public_profile']);
+        FacebookAccessToken facebookAccessToken =
+            facebookLoginResult.accessToken;
+        AuthCredential authCredential = FacebookAuthProvider.getCredential(
+            accessToken: facebookAccessToken.token);
+        FirebaseUser user;
+        oldUser = authCredential;
+        user =
+            (await _auth.signInWithCredential(authCredential).catchError((e) {
+          print(e);
+          try {
+            _accountValidator(email, "password");
+          } catch (e) {
+            _showAlert("El email ya esta registrado");
+          }
+        }))
+                .user;
+        return user;
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        // _showAlert("Cancelado por el usuario");
+        break;
+      case FacebookLoginStatus.error:
+        _showAlert("Fallo al iniciar, intente de nuevo.");
+        break;
     }
     return null;
   }
-  Future<void> _handleSignOut() => _googleSignIn.disconnect();
 
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
+  //--------------INICIO DE SESION CON GOOGLE------------------------------------------------------------------------------
   Future<FirebaseUser> _logInWithGoogle() async {
-
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
-    print("signed in " + user.email);
-    setState(() {
-      isLogged=true;
-    });
-    return user;
+    try {
+      final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      _accountValidator(googleUser.email, "google.com");
+      final FirebaseUser user =
+          (await _auth.signInWithCredential(credential)).user;
+      return user;
+    } catch (e) {
+      _showAlert(e.toString());
+      print("--------------------------------" +
+          e +
+          "-------------------------------------)");
+      return null;
+    }
   }
 
+  //--------------INICIO DE SESION CON EMAIL Y PASSWORD--------------------------------------------------------------------
   Future<FirebaseUser> _logInEmail(String email, String password) async {
-    AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password).then((value) => null);
-    _auth.createUserWithEmailAndPassword(email: email, password: password);
-    print(result.user);
+    AuthResult result = await _auth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .catchError((e) {
+      _accountValidator(email, 'password');
+      _showAlert("Usuario o contraeña invalidos");
+    });
     FirebaseUser user = result.user;
     isLogged = true;
+    myUser = user;
+    currentSesion = 'Email';
     setState(() {});
     return user;
   }
 
-
-  void _logIn() {
-    //_logInEmail();
+//------------------Crear usuario con email y password---------------------------------------------------------------------
+  Future<FirebaseUser> _signUpWithEmail(String email, String password) async {
+    final FirebaseUser user = (await _auth
+            .createUserWithEmailAndPassword(email: email, password: password)
+            .catchError((e) {
+      _accountValidator(email, 'password');
+    }))
+        .user;
+    myUser = user;
+    isLogged = true;
+    currentSesion = 'Email';
+    setState(() {});
+    return user;
   }
 
+//---------------------------------------Validador para linkear las cuentas---------------------------------------
+  Future<FirebaseUser> _accountValidator(String email, String key) async {
+    List<String> providers =
+        await _auth.fetchSignInMethodsForEmail(email: email);
+    print(providers);
+    if (providers.length != 0) {
+      for (var x in providers) {
+        if (x == key) {
+          _showAlert("El email ya existe en base de datos");
+        } else {
+          switch (x) {
+            case 'google.com':
+              final GoogleSignInAccount googleUser =
+                  await _googleSignIn.signIn();
+              final GoogleSignInAuthentication googleAuth =
+                  await googleUser.authentication;
+              final AuthCredential credential =
+                  GoogleAuthProvider.getCredential(
+                accessToken: googleAuth.accessToken,
+                idToken: googleAuth.idToken,
+              );
+              credentials.add(credential);
+              break;
+            case 'facebook.com':
+              final result = await facebookLogin.logIn(['email']);
+              switch (result.status) {
+                case FacebookLoginStatus.loggedIn:
+                  final FacebookLoginResult facebookLoginResult =
+                      await facebookLogin.logIn(['email', 'public_profile']);
+                  FacebookAccessToken facebookAccessToken =
+                      facebookLoginResult.accessToken;
+                  AuthCredential authCredential =
+                      FacebookAuthProvider.getCredential(
+                          accessToken: facebookAccessToken.token);
+                  //credentials.add(authCredential);
+                  break;
+                case FacebookLoginStatus.cancelledByUser:
+                  // _showAlert("Cancelado por el usuario");
+                  break;
+                case FacebookLoginStatus.error:
+                  _showAlert("Fallo al iniciar, intente de nuevo.");
+                  break;
+              }
+              break;
+            case 'password':
+              switch (key) {
+                case 'google.com':
+                  break;
+                case 'facebook.com':
+                  break;
+              }
+              break;
+          }
+        }
+      }
+      _auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((user) {
+        if (credentials.length != 0) {
+          for (var x in credentials) {
+            user.user.linkWithCredential(x);
+          }
+        }
+      });
+    } else {
+      if (key == 'google.com') {
+        try {
+          final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+          final GoogleSignInAuthentication googleAuth =
+              await googleUser.authentication;
+          final AuthCredential credential = GoogleAuthProvider.getCredential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+          final FirebaseUser user =
+              (await _auth.signInWithCredential(credential)).user;
+        } catch (e) {
+          _showAlert(e.toString());
+          print("--------------------------------" +
+              e +
+              "-------------------------------------)");
+        }
+      }
+    }
+  }
+
+//------------------Cerrar sesion validando cual fue el metodo de inicio --------------------------------------------------
   void _logOut() async {
     await _auth.signOut().then((value) {
+      switch (currentSesion) {
+        case 'Facebook':
+          facebookLogin.logOut();
+          break;
+        case 'Google':
+          _googleSignIn.disconnect();
+          break;
+        default:
+          break;
+      }
+
       isLogged = false;
-      _handleSignOut();
+
       setState(() {});
     });
+  }
+
+//------------------Mostrar Alerta en caso de error iniciando sesion  -----------------------------------------------------
+  Future<void> _showAlert(String titulo) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('$titulo'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Aceptar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -88,13 +250,14 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          _crearFondo(context),
+          _createBackground(context),
           isLogged ? _isLog(context) : _loginForm(context),
         ],
       ),
     );
   }
 
+//------------------Vista cuando el usuario inicio sesion -----------------------------------------------------------------
   Widget _isLog(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -122,15 +285,17 @@ class _LoginPageState extends State<LoginPage> {
             ),
             child: Column(
               children: <Widget>[
-                Text("${name}"),
-                Text("${email}"),
+                Text("${myUser.displayName}"),
+                Text("${myUser.email}"),
                 RaisedButton(
                   textColor: Colors.white,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                     child: Text("Cerrar Sesión"),
                   ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                   elevation: 0,
                   color: Colors.deepPurple,
                   onPressed: _logOut,
@@ -138,7 +303,7 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
-          Text("Olvidaste tu contraseña"),
+          isLogged ? SizedBox() : Text("Olvidaste tu contraseña"),
           SizedBox(
             height: 100,
           )
@@ -147,6 +312,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+//------------------Formulario de login -----------------------------------------------------------------------------------
   Widget _loginForm(BuildContext context) {
     final bloc = Provider.of(context);
     final size = MediaQuery.of(context).size;
@@ -161,27 +327,43 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             width: size.width * 0.85,
             margin: EdgeInsets.symmetric(vertical: 30),
-            padding: EdgeInsets.symmetric(vertical: 50),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5), boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 3.0,
-                offset: Offset(0.0, 5.0),
-                spreadRadius: 3,
-              )
-            ]),
+            padding: EdgeInsets.only(top: 50, bottom: 25),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 3.0,
+                    offset: Offset(0.0, 5.0),
+                    spreadRadius: 3,
+                  )
+                ]),
             child: Column(
               children: <Widget>[
                 Text(
-                  "Ingreso",
+                  isRegister ? "Ingresar" : "Registrar",
                   style: TextStyle(fontSize: 20.0),
                 ),
                 SizedBox(height: 60),
-                _crearEmail(bloc),
+                _email(bloc),
                 SizedBox(height: 30),
-                _crearPass(bloc),
+                _password(bloc),
                 SizedBox(height: 30),
-                _crearBoton(bloc),
+                isRegister ? _loginButton(bloc) : _registerButton(bloc),
+                SizedBox(
+                  height: 16,
+                ),
+                GestureDetector(
+                  child: isRegister
+                      ? Text("¿Aun no estas registrado?")
+                      : Text("¿Ya estas registrado?"),
+                  onTap: () {
+                    setState(() {
+                      isRegister = !isRegister;
+                    });
+                  },
+                ),
                 Divider(),
                 FacebookSignInButton(
                   borderRadius: 5,
@@ -189,9 +371,7 @@ class _LoginPageState extends State<LoginPage> {
                     _loginWithFacebook().then((onValue) {
                       if (onValue != null) {
                         myUser = onValue;
-                        image = myUser.photoUrl;
-                        name = myUser.displayName;
-                        email = myUser.email;
+                        currentSesion = 'Facebook';
                         isLogged = true;
                         setState(() {});
                       }
@@ -199,10 +379,20 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   text: "Continuar con Facebook",
                 ),
+                SizedBox(
+                  height: 16,
+                ),
                 GoogleSignInButton(
                   borderRadius: 5,
                   onPressed: () {
-                    _logInWithGoogle().then((FirebaseUser user) => print(myUser = user)).catchError((e) => print(e));
+                    _logInWithGoogle().then((onValue) {
+                      if (onValue != null) {
+                        myUser = onValue;
+                        currentSesion = 'Google';
+                        isLogged = true;
+                        setState(() {});
+                      }
+                    });
                   },
                   text: "   Continuar con Google   ",
                 ),
@@ -218,7 +408,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _crearEmail(LoginBloc bloc) {
+//------------------Crear input del email con validacion en bloc ----------------------------------------------------------
+  Widget _email(LoginBloc bloc) {
     return StreamBuilder(
       stream: bloc.emailStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -229,12 +420,12 @@ class _LoginPageState extends State<LoginPage> {
             decoration: InputDecoration(
               icon: Icon(
                 Icons.alternate_email,
-                color: Colors.deepPurple,
+                color: Colors.green,
               ),
-              hintText: 'example@hotmail.com',
+              hintText: 'example@hotmail.com',
               labelText: 'Correo Electronico',
               errorText: snapshot.error,
-              counterText: snapshot.data,
+              // counterText: snapshot.data,
             ),
             onChanged: bloc.changeEmail,
           ),
@@ -243,7 +434,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _crearPass(LoginBloc bloc) {
+//------------------Crear input del password con validacion en bloc -------------------------------------------------------
+  Widget _password(LoginBloc bloc) {
     return StreamBuilder(
       stream: bloc.passwordStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -254,10 +446,11 @@ class _LoginPageState extends State<LoginPage> {
             decoration: InputDecoration(
                 icon: Icon(
                   Icons.lock_outline,
-                  color: Colors.deepPurple,
+                  color: Colors.green,
                 ),
+                hintText: "****",
                 labelText: 'Contraseña',
-                counterText: snapshot.data,
+                // counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: bloc.changePassword,
           ),
@@ -266,7 +459,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _crearBoton(LoginBloc bloc) {
+//------------------Crear input de tipo boton para entrar con validacion en bloc ------------------------------------------
+  Widget _loginButton(LoginBloc bloc) {
     return StreamBuilder(
       stream: bloc.formValidStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -276,14 +470,18 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
             child: Text("Ingresar"),
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
           elevation: 0,
-          color: Colors.deepPurple,
+          color: Colors.green,
           onPressed: snapshot.hasData
               ? () {
-                  print(bloc.password);
-                  print(bloc.email);
                   _logInEmail(bloc.email, bloc.password);
+                  setState(() {
+                    email = bloc.email;
+                    password = bloc.password;
+                  });
                 }
               : null,
         );
@@ -291,14 +489,48 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _crearFondo(BuildContext context) {
+//------------------Crear input de tipo boton para registrar con validacion en bloc ---------------------------------------
+  Widget _registerButton(LoginBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.formValidStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return RaisedButton(
+          textColor: Colors.white,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+            child: Text("Registrar"),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          elevation: 0,
+          color: Colors.blue,
+          onPressed: snapshot.hasData
+              ? () {
+                  _signUpWithEmail(bloc.email, bloc.password);
+                  setState(() {
+                    email = bloc.email;
+                    password = bloc.password;
+                  });
+                }
+              : null,
+        );
+      },
+    );
+  }
+
+//------------------Crear fondo para formulario  --------------------------------------------------------------------------
+  Widget _createBackground(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final fondoMorado = Container(
       height: size.height * 0.4,
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: <Color>[Color.fromRGBO(63, 63, 156, 1.0), Color.fromRGBO(90, 70, 178, 1.0)],
+          colors: <Color>[
+            Color.fromRGBO(0, 100, 0, 1.0),
+            Color.fromRGBO(0, 100, 0, 0.8)
+          ],
         ),
       ),
     );
@@ -310,27 +542,32 @@ class _LoginPageState extends State<LoginPage> {
         color: Color.fromRGBO(255, 255, 255, 0.05),
       ),
     );
-    return Stack(children: <Widget>[
-      fondoMorado,
-      Positioned(top: 90, left: 30, child: circulo),
-      Positioned(top: -40, right: -30, child: circulo),
-      Positioned(bottom: -50, right: -10, child: circulo),
-      Container(
-        padding: EdgeInsets.only(top: 90),
-        child: Column(
-          children: <Widget>[
-            //isLogged ? Image.network(image) : Icon(Icons.person_pin_circle, color: Colors.white, size: 100),
-            SizedBox(
-              height: 10,
-              width: double.infinity,
-            ),
-            Text(
-              isLogged ? "${name}" : "Iniciar Sesión",
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            ),
-          ],
+    return Stack(
+      children: <Widget>[
+        fondoMorado,
+        Positioned(top: 90, left: 30, child: circulo),
+        Positioned(top: -40, right: -30, child: circulo),
+        Positioned(bottom: -50, right: -10, child: circulo),
+        Container(
+          padding: EdgeInsets.only(top: 90),
+          child: Column(
+            children: <Widget>[
+              isLogged && myUser.photoUrl != null
+                  ? Image.network(myUser.photoUrl)
+                  : Icon(Icons.person_pin_circle,
+                      color: Colors.white, size: 100),
+              SizedBox(
+                height: 10,
+                width: double.infinity,
+              ),
+              Text(
+                isLogged ? "${myUser.displayName}" : "Iniciar Sesión",
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              ),
+            ],
+          ),
         ),
-      )
-    ]);
+      ],
+    );
   }
 }
