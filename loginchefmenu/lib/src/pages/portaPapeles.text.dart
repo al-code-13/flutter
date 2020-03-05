@@ -474,7 +474,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
-        return AlertDialog(
+        return AlertDialog(£
           title: Text('$titulo'),
           actions: <Widget>[
             FlatButton(
