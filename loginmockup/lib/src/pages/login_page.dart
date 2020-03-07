@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../bloc/login_bloc.dart';
-import '../bloc/provider.dart';
-import 'dart:math' as math;
+import 'package:loginmockup/src/pages/codeVerification.dart';
+
+import 'createBackground.dart';
+import 'package:loginmockup/src/pages/otherMethods.dart';
+import 'package:loginmockup/src/pages/personalData.dart';
+import 'package:loginmockup/src/pages/phoneNumberPage.dart';
+
 
 class LoginPage extends StatefulWidget {
+ LoginPage({Key key}) : super(key: key);
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final createBackground = CreateBackground();
+  final phoneNumberPage = PhoneNumberPage();
+  final otherMethods = OtherMethods();
+  final personalData = PersonalData();
   //final twitterLogin = new TwitterLogin(
   //   consumerKey: 'Y9KsGQiLOSKqFt4ieZCwQm23R',
   //   consumerSecret: '3q02R80J9N9VdmRkyjF8eruAODaS79u1cZ61UN2dLamHm49LKW',
   // );
-
   bool isLogged = false;
   String currentSesion;
   bool isRegister = true;
@@ -27,76 +34,49 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          _createBackground(context),
+           createBackground.createBigBackground(context),
+          //  createBackground.createSlimBackground(context),
+          phoneNumberPage.phoneNumberPage(context),
+          // otherMethods.otherMethods(context),
+          // CodeVerification(),
+          // personalData.personalData(context),
           // isLogged ? _isLog(context) : _loginForm(context),
         ],
       ),
     );
   }
 
-  //------------------Crear fondo para formulario  --------------------------------------------------------------------------
-  Widget _createBackground(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+  
 
-    final banner = Transform(
-      alignment: Alignment.center,
-      transform: Matrix4.rotationY(math.pi),
-      child: Container(
-        height: size.height * 0.4,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(
-              "https://s1.1zoom.me/big0/841/Meat_products_Vegetables_457159.jpg",
-            ),
-          ),
-        ),
-      ),
-    );
-    final circulo = Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100),
-        color: Color.fromRGBO(255, 255, 255, 0.05),
-      ),
-    );
-    final greenLine = Container(
-      color: Colors.green,
-      height: 10,
-      width: double.infinity,
-      padding: EdgeInsets.all(0),
-      margin: EdgeInsets.all(0),
-    );
-
-    return Stack(
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            banner,
-            greenLine,
-          ],
-        ),
-        Positioned(top: 90, left: 30, child: circulo),
-        Positioned(top: -40, right: -30, child: circulo),
-        Positioned(bottom: -50, right: -10, child: circulo),
-        Container(
-          padding: EdgeInsets.only(top: 90),
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 10,
-                width: double.infinity,
-              ),
-              Text(
-                "Chefmenu",
-                style: TextStyle(color: Colors.white, fontSize: 25),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  
 }
+// Container(
+//                   height: 64.0,
+//                   width: 56.0,
+//                   child: Card(
+//                     color: Color.fromRGBO(0, 0, 0, 0.2),
+//                     child: Padding(
+//                       padding: EdgeInsets.only(left: 10.0, right: 10.0),
+//                       child: TextField(
+//                         textAlign: TextAlign.center,
+//                         keyboardType: TextInputType.number,
+//                         maxLength: 1,
+//                         style: TextStyle(fontSize: 24),
+//                         decoration: InputDecoration(
+//                           focusedBorder: UnderlineInputBorder(
+//                             borderSide: BorderSide(
+//                               color: Colors.transparent,
+//                               width: 4,
+//                             ),
+//                           ),
+
+//                           counterText: '',
+//                           hintStyle: TextStyle(
+//                             color: Colors.black,
+//                             fontSize: 20.0,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),

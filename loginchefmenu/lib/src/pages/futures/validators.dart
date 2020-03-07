@@ -48,8 +48,6 @@ class Validators {
       print(auth.toString());
     };
     final PhoneVerificationFailed verifiedFailed = (AuthException exception) {
-      print("Aca tambien se putea");
-
       print("Error message: " + exception.message + " es aca");
       if (exception.message.contains('not authorized'))
         print('Something has gone wrong, please try later');
