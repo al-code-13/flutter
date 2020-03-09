@@ -6,7 +6,8 @@ final _icons = <String, IconData>{
   'folder_open'   : Icons.folder_open,
   'donut_large'   : Icons.donut_large,
   'input'         : Icons.input,
-  'battery_std'   : Icons.battery_std
+  'battery_std'   : Icons.battery_std,
+  'list'         : Icons.list
 };
 Icon getIcon (String iconName){
   return Icon(_icons[iconName],color: Colors.cyan,);

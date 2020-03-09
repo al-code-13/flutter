@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:loginchefmenu/src/pages/login_page.dart';
 
 import 'src/bloc/provider.dart';
-import 'src/pages/home_page.dart';
+
 import 'src/routes/routes.dart';
 
 void main() => runApp(MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         initialRoute: 'LoginPage',
         routes: getRoutes(),
         onGenerateRoute: (settings) {
-          return MaterialPageRoute(builder: (context) => HomePage());
+          return MaterialPageRoute(builder: (context) => LoginPage());
         },
       ),
     );

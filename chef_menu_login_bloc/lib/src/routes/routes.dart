@@ -7,8 +7,8 @@ import '../pages/login_page.dart';
 
 Map<String,WidgetBuilder> getRoutes(){
   return<String,WidgetBuilder>{
-    'HomePage':(BuildContext) => HomePage(),
-    'LoginPage':(BuildContext) => LoginPage(),
+    'HomePage':(_) => HomePage(),
+    'LoginPage':(_) => LoginPage(),
 
   };
 }

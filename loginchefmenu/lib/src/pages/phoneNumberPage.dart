@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:loginchefmenu/src/bloc/login_bloc.dart';
+import 'package:loginchefmenu/src/bloc/provider.dart';
+import 'package:loginchefmenu/src/pages/futures/validators.dart';
 
-class PhoneNumberPage {
+class PhoneNumberPage extends StatefulWidget {
+  PhoneNumberPage({Key key}) : super(key: key);
+
+  @override
+  _PhoneNumberPageState createState() => _PhoneNumberPageState();
+}
+
+class _PhoneNumberPageState extends State<PhoneNumberPage> {
   bool accept = false;
-  Widget phoneNumberPage(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
+    final bloc = Provider.of(context);
     final leftMargin = MediaQuery.of(context).size.width * 0.08;
-
     return Stack(
       children: <Widget>[
         Positioned(
@@ -18,21 +29,28 @@ class PhoneNumberPage {
         Positioned(
           top: MediaQuery.of(context).size.height * 0.55,
           left: leftMargin,
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.5,
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: TextField(
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                icon: Icon(
-                  Icons.phone,
-                  color: Colors.green,
-                ),
-                hintText: '123-456 78 90',
-                labelText: 'Escribe tu número',
-              ),
-            ),
-          ),
+          child: StreamBuilder(
+              stream: bloc.phoneStream,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      icon: Icon(
+                        Icons.phone,
+                        color: Colors.green,
+                      ),
+                      hintText: '123-456 78 90',
+                      labelText: 'Escribe tu número',
+                      errorText: snapshot.error,
+                      // counter: Text(snapshot.data),
+                    ),
+                     onChanged: bloc.changePhone,
+                  ),
+                );
+              }),
         ),
         Positioned(
           top: MediaQuery.of(context).size.height * 0.65,
@@ -52,9 +70,10 @@ class PhoneNumberPage {
                 ),
               ),
               onPressed: () {
-                print("touch");
+                Validators().logInPhone(context);
               }),
         ),
+        // +573004896661
         Positioned(
           left: MediaQuery.of(context).size.width * 0.05,
           bottom: MediaQuery.of(context).size.height * 0.02,
@@ -65,7 +84,9 @@ class PhoneNumberPage {
                 checkColor: Colors.white,
                 value: accept,
                 onChanged: (value) {
-                  accept = !accept;
+                  setState(() {
+                    accept = !accept;
+                  });
                 },
               ),
               Text(

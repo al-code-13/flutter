@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 Map<String,WidgetBuilder> getRoutes(){
   return<String,WidgetBuilder>{
-    'HomePage':(BuildContext) => HomePage(),
+    'HomePage':(_) => HomePage(),
   };
 }
 

@@ -37,7 +37,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
               RaisedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _verifyPhone();
+                  verifyPhone();
                 },
                 child: Text("Ingresar"),
               ),
@@ -48,7 +48,7 @@ class _PhoneAuthState extends State<PhoneAuth> {
     );
   }
 
-  Future<void> _verifyPhone() async {
+  Future<void> verifyPhone() async {
     final PhoneCodeAutoRetrievalTimeout autoRetrive = (String verId) {
       this.phoneVerificationId = verId;
     };

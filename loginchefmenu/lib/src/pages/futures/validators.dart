@@ -48,6 +48,8 @@ class Validators {
       print(auth.toString());
     };
     final PhoneVerificationFailed verifiedFailed = (AuthException exception) {
+      print("Aca tambien se putea");
+
       print("Error message: " + exception.message + " es aca");
       if (exception.message.contains('not authorized'))
         print('Something has gone wrong, please try later');
@@ -182,7 +184,7 @@ class Validators {
     );
     myUser.linkWithCredential(credential);
   }
-
+ 
 //---------------------------------------Validador para buscar las cuentas con el mismo email---------------------------------------
   Future<bool> otherAccounts(BuildContext context) async {
     if (emailToValidate != null) {

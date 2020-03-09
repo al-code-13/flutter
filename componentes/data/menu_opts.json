@@ -30,6 +30,11 @@
             "ruta" : "slider",
             "icon" : "battery_std",
             "texto": "Slider"
+        },
+        {
+            "ruta" : "lista",
+            "icon" : "list",
+            "texto": "Listas"
         }
     ]
 }

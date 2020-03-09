@@ -7,6 +7,7 @@ class SliderPage extends StatefulWidget {
 
 class _SliderPageState extends State<SliderPage> {
   double _valor = 100.0;
+  bool _blockCheck = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,6 +18,8 @@ class _SliderPageState extends State<SliderPage> {
         padding: EdgeInsets.only(top: 50.0),
         child: Column(children: <Widget>[
           _crearSlider(),
+          _checkBox(),
+          _createSwicth(),
           Expanded(child: _crearImagen()),
         ]),
       ),
@@ -31,17 +34,47 @@ class _SliderPageState extends State<SliderPage> {
       value: _valor,
       min: 10.0,
       max: 400.0,
-      onChanged: (valor) {
-        setState(() {
-          _valor = valor;
-        });
-      },
+      onChanged: (!_blockCheck)
+          ? null
+          : (valor) {
+              setState(() {
+                _valor = valor;
+              });
+            },
     );
   }
 
+  Widget _checkBox() {
+    // return Checkbox(
+    //   value: _blockCheck,
+    //   onChanged: (value) {
+    //     _blockCheck = value;
+    //     setState(() {});
+    //   },
+    // );
+    return CheckboxListTile(
+      title: Text("Block Slider"),
+      value: _blockCheck,
+      onChanged: (value) {
+        _blockCheck = value;
+        setState(() {});
+      },
+    );
+  }
+  Widget _createSwicth(){
+    return SwitchListTile(
+      title: Text("Block Slider"),
+      value: _blockCheck,
+      onChanged: (value) {
+        _blockCheck = value;
+        setState(() {});
+      },
+    );
+  }
   Widget _crearImagen() {
     return Image(
-      image: NetworkImage('https://www.imgworlds.com/wp-content/uploads/2015/12/18-CONTACTUS-HEADER.jpg'),
+      image: NetworkImage(
+          'https://www.imgworlds.com/wp-content/uploads/2015/12/18-CONTACTUS-HEADER.jpg'),
       width: _valor,
       fit: BoxFit.contain,
     );

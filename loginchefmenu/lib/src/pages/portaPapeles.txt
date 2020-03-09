@@ -893,3 +893,316 @@ class Profile {
     this.id,
   });
 }
+
+
+
+////////// el maldito google info
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>loginchefmenu</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb181463933143345</string>
+				<string>com.googleusercontent.apps.39328973617-6p4l9u5nkmmskl8muesomoqmi560v0io</string>
+			</array>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>181463933143345</string>
+	<key>FacebookDisplayName</key>
+	<string>pruebaflutter</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fbapi20130214</string>
+		<string>fbapi20130410</string>
+		<string>fbapi20130702</string>
+		<string>fbapi20131010</string>
+		<string>fbapi20131219</string>
+		<string>fbapi20140410</string>
+		<string>fbapi20140116</string>
+		<string>fbapi20150313</string>
+		<string>fbapi20150629</string>
+		<string>fbapi20160328</string>
+		<string>fbauth</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
+</dict>
+</plist>
+
+  //------------------Crear fondo para formulario  --------------------------------------------------------------------------
+  Widget _createBackground(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final fondoMorado = Container(
+      height: size.height * 0.4,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: <Color>[
+            Color.fromRGBO(0, 100, 0, 1.0),
+            Color.fromRGBO(0, 100, 0, 0.8)
+          ],
+        ),
+      ),
+    );
+    final circulo = Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        color: Color.fromRGBO(255, 255, 255, 0.05),
+      ),
+    );
+    return Stack(
+      children: <Widget>[
+        fondoMorado,
+        Positioned(top: 90, left: 30, child: circulo),
+        Positioned(top: -40, right: -30, child: circulo),
+        Positioned(bottom: -50, right: -10, child: circulo),
+        Container(
+          padding: EdgeInsets.only(top: 90),
+          child: Column(
+            children: <Widget>[
+              // isLogged && myUser.photoUrl != null
+              //     ? Image.network(myUser.photoUrl)
+              //     : Icon(Icons.person_pin_circle,
+              //         color: Colors.white, size: 100),
+              SizedBox(
+                height: 10,
+                width: double.infinity,
+              ),
+              Text(
+                isLogged ? "${myUser.displayName}" : "Iniciar Sesión",
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  //------------------Vista cuando el usuario inicio sesion -----------------------------------------------------------------
+  Widget _isLog(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          SafeArea(
+            child: Container(
+              height: 180,
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.85,
+            margin: EdgeInsets.symmetric(vertical: 30),
+            padding: EdgeInsets.symmetric(vertical: 50),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 3.0,
+                  offset: Offset(0.0, 5.0),
+                  spreadRadius: 3,
+                )
+              ],
+            ),
+            child: Column(
+              children: <Widget>[
+                Text("${myUser.displayName}"),
+                Text("${myUser.email}"),
+                RaisedButton(
+                  textColor: Colors.white,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                    child: Text("Cerrar Sesión"),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  elevation: 0,
+                  color: Colors.deepPurple,
+                  onPressed: _logOut,
+                ),
+                RaisedButton(
+                  textColor: Colors.white,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                    child: Text("Facebook Link"),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  elevation: 0,
+                  color: Colors.deepPurple,
+                  onPressed: () async {},
+                ),
+                RaisedButton(
+                  textColor: Colors.white,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                    child: Text("Google Link"),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  elevation: 0,
+                  color: Colors.deepPurple,
+                  onPressed: () async {},
+                ),
+              ],
+            ),
+          ),
+          isLogged ? SizedBox() : Text("Olvidaste tu contraseña"),
+          SizedBox(
+            height: 100,
+          )
+        ],
+      ),
+    );
+  }
+
+  //------------------Formulario de login -----------------------------------------------------------------------------------
+  Widget _loginForm(BuildContext context) {
+    final bloc = Provider.of(context);
+    final size = MediaQuery.of(context).size;
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          SafeArea(
+            child: Container(
+              height: 180,
+            ),
+          ),
+          Container(
+            width: size.width * 0.85,
+            margin: EdgeInsets.symmetric(vertical: 30),
+            padding: EdgeInsets.only(top: 50, bottom: 25),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 3.0,
+                    offset: Offset(0.0, 5.0),
+                    spreadRadius: 3,
+                  )
+                ]),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  isRegister ? "Ingresar" : "Registrar",
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                SizedBox(height: 60),
+                _email(bloc),
+                SizedBox(height: 30),
+                _password(bloc),
+                SizedBox(height: 30),
+                isRegister ? _loginButton(bloc) : _registerButton(bloc),
+                SizedBox(
+                  height: 16,
+                ),
+                GestureDetector(
+                  child: isRegister
+                      ? Text("¿Aun no estas registrado?")
+                      : Text("¿Ya estas registrado?"),
+                  onTap: () {
+                    setState(() {
+                      isRegister = !isRegister;
+                    });
+                  },
+                ),
+                Divider(),
+                FacebookSignInButton(
+                  borderRadius: 5,
+                  onPressed: () {
+                    _validators.loginWithFacebook(context).then((onValue) {
+                      if (onValue != null) {
+                        myUser = onValue;
+                        currentSesion = 'Facebook';
+                        isLogged = true;
+                        setState(() {});
+                      }
+                    });
+                  },
+                  text: "Continuar con Facebook",
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                GoogleSignInButton(
+                  borderRadius: 5,
+                  onPressed: () async {
+                    await _validators.logInWithGoogle();
+                  },
+                  text: "   Continuar con Google   ",
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                RaisedButton.icon(
+                  onPressed: () async {
+                    await _validators.logInPhone(context);
+                  },
+                  icon: Icon(Icons.phone),
+                  label: Text("Ingresar con numero de telefono"),
+                ),
+              ],
+            ),
+          ),
+          Text("Olvidaste tu contraseña"),
+          SizedBox(
+            height: 100,
+          ),
+        ],
+      ),
+    );
+  }
