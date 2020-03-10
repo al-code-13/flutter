@@ -3,72 +3,97 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:loginchefmenu/src/bloc/login_bloc.dart';
+import 'package:loginchefmenu/src/bloc/provider.dart';
+import 'package:loginchefmenu/src/pages/personalData.dart';
+import 'package:loginchefmenu/src/pages/utils/pinInput.dart';
+import 'package:loginchefmenu/src/routes/routes.dart';
 import 'dart:convert';
+
+import '../codeVerification.dart';
 
 class Validators {
   final facebookLogin = FacebookLogin();
   final _googleSignIn = GoogleSignIn();
-  FirebaseAuth _auth = FirebaseAuth.instance;
 
+  FirebaseAuth _auth = FirebaseAuth.instance;
+LoginBloc bloc;
   List<String> providers;
   FirebaseUser myUser;
   AuthCredential globalCredential;
   String emailToValidate;
   String currentProvider;
-  String phoneNumber;
+  String verificationCode;
+
   String smsCode;
   String phoneVerificationId;
-  Future<void> _verifyPhone(BuildContext context) async {
-    final PhoneCodeAutoRetrievalTimeout autoRetrive = (String verId) {
-      this.phoneVerificationId = verId;
-    };
-    final PhoneCodeSent smsCodeSent =
-        (String verId, [int forceCodeRedend]) async {
-      this.phoneVerificationId = verId;
-      print(verId);
+Future<void>linkEmail(AuthCredential credential){
+_auth.currentUser().then((value) => value.linkWithCredential(credential));
+}
+  Future<void> verifyPhone(BuildContext context, String phone) async {
+    try {
+      this.bloc=bloc;
+      final PhoneCodeAutoRetrievalTimeout autoRetrive = (String verId) {
+        this.phoneVerificationId = verId;
+      };
+      final PhoneCodeSent smsCodeSent =
+          (String verId, [int forceCodeRedend]) async {
+        this.phoneVerificationId = verId;
+        print(verId);
 
-      _smsCodeDialog(context).then((value) {
-        print("El codigo y se mando de nuevo a firebase");
-      });
-    };
-    final PhoneVerificationCompleted verifiedSuccess = (AuthCredential auth) {
-      print("Entra como satisfactorio gonorrea");
-      _auth.signInWithCredential(auth).then((AuthResult value) {
-        if (value.user != null) {
-          print('Authentication successful');
+        // _rta(context).then(
+        //   (value) => {
+        //     print("entro sin saliba"),
+        //   },
+        // );
+//+573004896661
+        print("no fue");
+        _smsCodeDialog(context).then((value) {
+          print("El codigo y se mando de nuevo a firebase");
+        });
+      };
+      final PhoneVerificationCompleted verifiedSuccess = (AuthCredential auth) {
+        print("Entra como satisfactorio gonorrea");
+        _auth.signInWithCredential(auth).then((AuthResult value) {
+          if (value.user != null) {
+            print('Authentication successful');
 
-          return value.user;
-        } else {
-          print('Invalid code/invalid authentication');
-        }
-      }).catchError((error) {
-        print('Something has gone wrong, please try later');
-      });
-      print('cerdenciales de ingreso');
-      print(auth.toString());
-    };
-    final PhoneVerificationFailed verifiedFailed = (AuthException exception) {
-      print("Aca tambien se putea");
+            print('Se fue');
+            return value.user;
+          } else {
+            print('Invalid code/invalid authentication');
+          }
+        }).catchError((error) {
+          print('Something has gone wrong, please try later');
+        });
+        print('cerdenciales de ingreso');
+        print(auth.toString());
+      };
+      final PhoneVerificationFailed verifiedFailed = (AuthException exception) {
+        print("Aca tambien se putea");
 
-      print("Error message: " + exception.message + " es aca");
-      if (exception.message.contains('not authorized'))
-        print('Something has gone wrong, please try later');
-      else if (exception.message.contains('Network'))
-        print('Please check your internet connection and try again');
-      else
-        print('Something has gone wrong, please try later');
-    };
-    await _auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      codeSent: smsCodeSent,
-      codeAutoRetrievalTimeout: autoRetrive,
-      timeout: const Duration(seconds: 60),
-      verificationCompleted: verifiedSuccess,
-      verificationFailed: verifiedFailed,
-    );
+        print("Error message: " + exception.message + " es aca");
+        if (exception.message.contains('not authorized'))
+          print('Something has gone wrong, please try later');
+        else if (exception.message.contains('Network'))
+          print('Please check your internet connection and try again');
+        else
+          print('Something has gone wrong, please try later');
+      };
+      await _auth.verifyPhoneNumber(
+        phoneNumber: phone,
+        codeSent: smsCodeSent,
+        codeAutoRetrievalTimeout: autoRetrive,
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: verifiedSuccess,
+        verificationFailed: verifiedFailed,
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
-  Future<void> _signInWithPhoneNumber() async {
+  Future<void> signInWithPhoneNumber() async {
     final phoneCredential = await PhoneAuthProvider.getCredential(
         verificationId: phoneVerificationId, smsCode: smsCode);
     _auth.signInWithCredential(phoneCredential).then((value) {
@@ -80,6 +105,71 @@ class Validators {
     });
   }
 
+  Future<Widget> _rta(BuildContext context) async {
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.16,
+          left: MediaQuery.of(context).size.width * 0.05,
+          child: Text(
+            "Mi código es:",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.2,
+          left: MediaQuery.of(context).size.width * 0.06,
+          child: Text(
+            "300 4896662",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black54,
+            ),
+          ),
+        ),
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.3,
+          left: MediaQuery.of(context).size.width * 0.1,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: VerificationCodeInput(
+              keyboardType: TextInputType.number,
+              length: 6,
+              autofocus: true,
+              onCompleted: (String value) {
+                verificationCode = value;
+              },
+            ),
+          ),
+        ),
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.48,
+          left: MediaQuery.of(context).size.width * 0.16,
+          right: MediaQuery.of(context).size.width * 0.16,
+          child: RaisedButton(
+              color: Colors.green,
+              textColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                child: Text(
+                  "Continuar",
+                  style: TextStyle(fontSize: 24),
+                ),
+              ),
+              onPressed: () {
+                signInWithPhoneNumber();
+              }),
+        ),
+      ],
+    );
+  }
+
   Future<bool> _smsCodeDialog(BuildContext context) {
     return showDialog(
         context: context,
@@ -87,9 +177,12 @@ class Validators {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Ingrese su codigo de verificacion"),
-            content: TextField(
-              onChanged: (value) {
-                this.smsCode = value;
+            content: VerificationCodeInput(
+              keyboardType: TextInputType.number,
+              length: 6,
+              autofocus: true,
+              onCompleted: (String value) {
+                smsCode = value;
               },
             ),
             contentPadding: EdgeInsets.all(10),
@@ -102,7 +195,8 @@ class Validators {
                       Navigator.of(context).pop();
                     } else {
                       Navigator.of(context).pop();
-                      _signInWithPhoneNumber();
+
+                      signInWithPhoneNumber();
                     }
                   });
                 },
@@ -113,6 +207,7 @@ class Validators {
         });
   }
 
+  // +573004896661
   Future<void> logInPhone(BuildContext context) async {
     showDialog(
       context: context,
@@ -124,7 +219,7 @@ class Validators {
             children: <Widget>[
               TextField(
                 onChanged: (value) {
-                  phoneNumber = value;
+                  //phone = value;
                 },
                 decoration: InputDecoration(
                     hintText: "0123456789", labelText: "Numero telefonico"),
@@ -132,7 +227,7 @@ class Validators {
               RaisedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _verifyPhone(context);
+                  // verifyPhone(context);
                 },
                 child: Text("Ingresar"),
               ),
@@ -145,6 +240,7 @@ class Validators {
 
   //--------------INICIO DE SESION CON FACEBOOK----------------------------------------------------------------------------
   Future<FirebaseUser> loginWithFacebook(BuildContext context) async {
+    print(myUser.toString());
     final result = await facebookLogin.logIn(['email']);
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
@@ -154,7 +250,14 @@ class Validators {
             facebookLoginResult.accessToken;
         AuthCredential authCredential = FacebookAuthProvider.getCredential(
             accessToken: facebookAccessToken.token);
-        myUser.linkWithCredential(authCredential);
+        _auth.currentUser().then((value) {
+          if (value != null) {
+            value.linkWithCredential(authCredential);
+          } else {
+            _auth.signInWithCredential(authCredential);
+          }
+        });
+        // myUser.linkWithCredential(authCredential);
         break;
       case FacebookLoginStatus.cancelledByUser:
         break;
@@ -174,7 +277,8 @@ class Validators {
   }
 
   //--------------INICIO DE SESION CON GOOGLE------------------------------------------------------------------------------
-  Future<void> logInWithGoogle() async {
+  Future<void> logInWithGoogle(BuildContext context) async {
+    final bloc = Provider.of(context);
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
@@ -182,9 +286,15 @@ class Validators {
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    myUser.linkWithCredential(credential);
+    _auth.currentUser().then((value) {
+      if (value != null) {
+        value.linkWithCredential(credential);
+      } else {
+        _auth.signInWithCredential(credential);
+      }
+    });
   }
- 
+
 //---------------------------------------Validador para buscar las cuentas con el mismo email---------------------------------------
   Future<bool> otherAccounts(BuildContext context) async {
     if (emailToValidate != null) {

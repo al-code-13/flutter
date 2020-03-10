@@ -7,28 +7,16 @@ import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter/services.dart';
 import 'package:loginchefmenu/src/pages/personalData.dart';
 import 'package:loginchefmenu/src/pages/phoneNumberPage.dart';
-import '../bloc/login_bloc.dart';
-import '../bloc/provider.dart';
 
-import 'codeVerification.dart';
 import 'createBackground.dart';
-import 'futures/validators.dart';
-import 'otherMethods.dart';
 
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
-
+// +573004896661
 class _LoginPageState extends State<LoginPage> {
-  @override
-  void dispose() {
-    super.dispose();
-  }
- 
-
   final createBackground = CreateBackground();
-
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   final facebookLogin = FacebookLogin();
@@ -38,18 +26,17 @@ class _LoginPageState extends State<LoginPage> {
     _auth.currentUser().then((value) {
       if (value != null) {
         return true;
-      }
-      else{
+      } else {
         return false;
       }
     });
   }
+
   bool isLogged;
   String currentSesion;
   bool isRegister = true;
 
   FirebaseUser myUser;
-  
 
   //------------------Cerrar sesion validando cual fue el metodo de inicio --------------------------------------------------
   void _logOut() async {
@@ -76,7 +63,8 @@ class _LoginPageState extends State<LoginPage> {
         children: <Widget>[
           // createBackground.createBigBackground(context),
           createBackground.createSlimBackground(context),
-          PhoneNumberPage(),
+           
+          // PhoneNumberPage(),
           // OtherMethods(),
           // CodeVerification(),
           // PersonalData(),

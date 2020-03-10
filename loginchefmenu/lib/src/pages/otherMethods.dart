@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:loginchefmenu/src/bloc/login_bloc.dart';
 import 'package:loginchefmenu/src/bloc/provider.dart';
+import 'package:loginchefmenu/src/pages/personalData.dart';
 
 import 'futures/validators.dart';
 
@@ -27,95 +28,106 @@ class _OtherMethodsState extends State<OtherMethods> {
     });
     return result.user;
   }
+
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.45,
-          left: MediaQuery.of(context).size.width * 0.05,
-          child: Row(
-            children: <Widget>[
-              Icon(
-                Icons.arrow_back_ios,
-                color: Colors.black54,
-              ),
-              Text(
-                "Bienvenido de nuevo",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54),
-              )
-            ],
-          ),
-        ),
-        Positioned(
-          left: MediaQuery.of(context).size.width * 0.08,
-          top: MediaQuery.of(context).size.height * 0.5,
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.5,
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: Column(
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.45,
+            left: MediaQuery.of(context).size.width * 0.05,
+            child: Row(
               children: <Widget>[
-                _email(bloc),
-                _password(bloc),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PersonalData()));
+                  },
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black54,
+                  ),
+                ),
+                Text(
+                  "Bienvenido de nuevo",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black54),
+                )
               ],
             ),
           ),
-        ),
-        _loginButton(bloc),
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.77,
-          left: MediaQuery.of(context).size.width * 0.12,
-          right: MediaQuery.of(context).size.width * 0.12,
-          child: FacebookSignInButton(
-            borderRadius: 5,
-            onPressed: () {
-              _validators.loginWithFacebook(context);
-            },
-            text: "Continuar con Facebook",
-          ),
-        ),
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.83,
-          left: MediaQuery.of(context).size.width * 0.12,
-          right: MediaQuery.of(context).size.width * 0.12,
-          child: GoogleSignInButton(
-            borderRadius: 5,
-            onPressed: () async {
-              _validators.logInWithGoogle().then((value) => {});
-            },
-            text: "   Continuar con Google   ",
-          ),
-        ),
-        Positioned(
-          left: MediaQuery.of(context).size.width * 0.05,
-          bottom: MediaQuery.of(context).size.height * 0.02,
-          child: Row(
-            children: <Widget>[
-              Checkbox(
-                activeColor: Colors.green,
-                checkColor: Colors.white,
-                value: accept,
-                onChanged: (value) {
-                  setState(() {
-                  accept = !accept;
-                  });
-                },
+          Positioned(
+            left: MediaQuery.of(context).size.width * 0.08,
+            top: MediaQuery.of(context).size.height * 0.5,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.5,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Column(
+                children: <Widget>[
+                  _email(bloc),
+                  _password(bloc),
+                ],
               ),
-              Text(
-                "Acepto terminos y condiciones",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+          _loginButton(bloc),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.77,
+            left: MediaQuery.of(context).size.width * 0.12,
+            right: MediaQuery.of(context).size.width * 0.12,
+            child: FacebookSignInButton(
+              borderRadius: 5,
+              onPressed: () {
+                _validators.loginWithFacebook(context);
+              },
+              text: "Continuar con Facebook",
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.83,
+            left: MediaQuery.of(context).size.width * 0.12,
+            right: MediaQuery.of(context).size.width * 0.12,
+            child: GoogleSignInButton(
+              borderRadius: 5,
+              onPressed: () async {
+                _validators.logInWithGoogle(context).then((value) => {});
+              },
+              text: "   Continuar con Google   ",
+            ),
+          ),
+          Positioned(
+            left: MediaQuery.of(context).size.width * 0.05,
+            bottom: MediaQuery.of(context).size.height * 0.02,
+            child: Row(
+              children: <Widget>[
+                Checkbox(
+                  activeColor: Colors.green,
+                  checkColor: Colors.white,
+                  value: accept,
+                  onChanged: (value) {
+                    setState(() {
+                      accept = !accept;
+                    });
+                  },
+                ),
+                Text(
+                  "Acepto terminos y condiciones",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
-
+  //+57300
   //------------------Crear input del email con validacion en bloc ----------------------------------------------------------
   Widget _email(LoginBloc bloc) {
     return StreamBuilder(
