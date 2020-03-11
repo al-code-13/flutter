@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:loginchefmenu/src/bloc/login_bloc.dart';
 import 'package:loginchefmenu/src/bloc/provider.dart';
+import 'package:loginchefmenu/src/pages/createBackground.dart';
 import 'package:loginchefmenu/src/pages/personalData.dart';
+import 'package:loginchefmenu/src/pages/phoneNumberPage.dart';
 
 import 'futures/validators.dart';
 
@@ -35,6 +37,7 @@ class _OtherMethodsState extends State<OtherMethods> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
+          CreateBackground().createBigBackground(context),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.45,
             left: MediaQuery.of(context).size.width * 0.05,
@@ -45,7 +48,7 @@ class _OtherMethodsState extends State<OtherMethods> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => PersonalData()));
+                            builder: (context) => PhoneNumberPage()));
                   },
                   child: Icon(
                     Icons.arrow_back_ios,

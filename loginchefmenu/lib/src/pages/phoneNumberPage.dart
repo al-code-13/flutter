@@ -1,8 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginchefmenu/src/bloc/login_bloc.dart';
 import 'package:loginchefmenu/src/bloc/provider.dart';
+import 'package:loginchefmenu/src/pages/createBackground.dart';
 import 'package:loginchefmenu/src/pages/futures/validators.dart';
+import 'package:loginchefmenu/src/pages/isLog.dart';
 import 'package:loginchefmenu/src/pages/personalData.dart';
+
+import 'otherMethods.dart';
 
 class PhoneNumberPage extends StatefulWidget {
   PhoneNumberPage({Key key}) : super(key: key);
@@ -12,6 +17,10 @@ class PhoneNumberPage extends StatefulWidget {
 }
 
 class _PhoneNumberPageState extends State<PhoneNumberPage> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  void _logOut() async {
+    await _auth.signOut();
+  }
 
   bool accept = false;
   @override
@@ -19,8 +28,9 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
     final bloc = Provider.of(context);
     final leftMargin = MediaQuery.of(context).size.width * 0.08;
     return Scaffold(
-          body: Stack(
+      body: Stack(
         children: <Widget>[
+          CreateBackground().createBigBackground(context),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.5,
             left: leftMargin,
@@ -50,7 +60,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                         errorText: snapshot.error,
                         // counter: Text(snapshot.data),
                       ),
-                       onChanged: bloc.changePhone,
+                      onChanged: bloc.changePhone,
                     ),
                   );
                 }),
@@ -74,11 +84,40 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                   ),
                 ),
                 onPressed: () {
-                  Validators().verifyPhone(context, '+573004896661').then((value) =>  Navigator.push(context,
-                MaterialPageRoute(builder: (context) => PersonalData())));
+                  Validators().verifyPhone(context, "+57" + bloc.phone);
                 }),
           ),
-          // +573004896661 @ 
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.75,
+            left: MediaQuery.of(context).size.width * 0.16,
+            right: MediaQuery.of(context).size.width * 0.16,
+            child: RaisedButton(
+              textColor: Colors.white,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                child: Text("Cerrar Sesión"),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              elevation: 0,
+              color: Colors.deepPurple,
+              onPressed: _logOut,
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.85,
+            left: MediaQuery.of(context).size.width * 0.16,
+            right: MediaQuery.of(context).size.width * 0.16,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => OtherMethods()));
+              },
+              child: Text("Ingresar con otro metodo",style: TextStyle(color:Colors.green),),
+            ),
+          ),
+          // +573004896661 @
           Positioned(
             left: MediaQuery.of(context).size.width * 0.05,
             bottom: MediaQuery.of(context).size.height * 0.02,

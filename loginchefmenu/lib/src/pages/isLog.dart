@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+import 'package:loginchefmenu/src/pages/createBackground.dart';
 import 'package:loginchefmenu/src/pages/personalData.dart';
 import 'package:loginchefmenu/src/pages/phoneNumberPage.dart';
 
@@ -27,6 +28,7 @@ class _IsLogState extends State<IsLog> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
+          CreateBackground().createSlimBackground(context),
           Positioned(
             child: Column(
               children: <Widget>[

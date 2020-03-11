@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginchefmenu/src/bloc/login_bloc.dart';
 import 'package:loginchefmenu/src/bloc/provider.dart';
+import 'package:loginchefmenu/src/pages/createBackground.dart';
 import 'package:loginchefmenu/src/pages/otherMethods.dart';
 import 'package:loginchefmenu/src/routes/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'futures/validators.dart';
 import 'isLog.dart';
@@ -14,29 +16,28 @@ class PersonalData extends StatefulWidget {
   @override
   _PersonalDataState createState() => _PersonalDataState();
 }
+
 //menuchef46@gmail.com
 class _PersonalDataState extends State<PersonalData> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   final validators = Validators();
   bool vivblePass = false;
+  Map crendetials;
   String phoneBloc;
+  Future<AuthCredential> getPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    String verificationId = prefs.getString("verificationId");
+    String smsCodes = prefs.getString("smsCode");
+    final phoneCredential = await PhoneAuthProvider.getCredential(
+        verificationId: verificationId, smsCode: smsCodes);
+    return phoneCredential;
+  }
+
 //------------------Crear usuario con email y password---------------------------------------------------------------------
   Future<FirebaseUser> _signUpWithEmail(String email, String password) async {
-    final FirebaseUser user = (await _auth
-            .createUserWithEmailAndPassword(email: email, password: password)
-            .catchError((e) async {
-      // currentProvider = "password";
-      // emailToValidate = email;
-      // await otherAccounts();
-    }))
-        .user;
-    // myUser = user;
-    // print(user);
-    // print("---------------");
-    // isLogged = true;
-    // currentSesion = 'Email';
-    setState(() {});
-    return user;
+    _auth.currentUser().then((value) => value.linkWithCredential(
+        EmailAuthProvider.getCredential(
+            email: email, password: password)));
   }
 
   @override
@@ -45,6 +46,7 @@ class _PersonalDataState extends State<PersonalData> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
+          CreateBackground().createSlimBackground(context),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.16,
             left: MediaQuery.of(context).size.width * 0.05,

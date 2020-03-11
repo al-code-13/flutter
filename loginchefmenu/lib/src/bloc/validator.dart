@@ -24,7 +24,7 @@ class InputValidator {
       StreamTransformer<String, String>.fromHandlers(handleData: (phone, sink) {
     if (phone != '') {
       List<String> phoneNew = phone.split(RegExp(r"b*"));
-        if (phone.length >= 13) {
+        if (phone.length >= 10) {
           //var newPone = '+57'+phone;
           sink.add(phone);
         } else {
