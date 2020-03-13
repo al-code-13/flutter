@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
-import 'package:loginchefmenu/src/pages/personalData.dart';
-import 'package:loginchefmenu/src/pages/utils/pinInput.dart';
 import 'dart:convert';
-
 import '../isLog.dart';
 
 class Validators {
@@ -14,117 +11,15 @@ class Validators {
   final _googleSignIn = GoogleSignIn();
 
   FirebaseAuth _auth = FirebaseAuth.instance;
-  String smsCode;
-  String phoneVerificationId;
-  Widget _navegador;
 
-  Future<void> verifyPhone(BuildContext context, String phone) async {
-    final PhoneCodeAutoRetrievalTimeout autoRetrive = (String verId) {
-      this.phoneVerificationId = verId;
-    };
-    final PhoneCodeSent smsCodeSent =
-        (String verId, [int forceCodeRedend]) async {
-      this.phoneVerificationId = verId;
-      await _smsCodeDialog(context);
-    };
-    final PhoneVerificationCompleted verifiedSuccess = (AuthCredential auth) {
-      _auth.signInWithCredential(auth).then((value) {
-        if (value.user != null) {
-          showAlert('Authentication successful', context);
-          return value.user;
-        } else {
-          showAlert('Invalid code/invalid authentication', context);
-        }
-      }).catchError((error) {
-        showAlert('Something has gone wrong, please try later', context);
-      });
-    };
-    final PhoneVerificationFailed verifiedFailed = (AuthException exception) {
-      if (exception.message.contains('not authorized'))
-        showAlert('Something has gone wrong, please try later', context);
-      else if (exception.message.contains('Network'))
-        showAlert(
-            'Please check your internet connection and try again', context);
-      else
-        showAlert('Something has gone wrong, please try later', context);
-    };
-    await _auth.verifyPhoneNumber(
-      phoneNumber: phone,
-      codeSent: smsCodeSent,
-      codeAutoRetrievalTimeout: autoRetrive,
-      timeout: const Duration(minutes: 10),
-      verificationCompleted: verifiedSuccess,
-      verificationFailed: verifiedFailed,
-    );
-  }
-
-  Future<void> signInWithPhoneNumber() async {
-    final phoneCredential = PhoneAuthProvider.getCredential(
-        verificationId: phoneVerificationId, smsCode: smsCode);
-    _auth.signInWithCredential(phoneCredential).then((value) {
-      if (value.user.email != null) {
-        _navegador = IsLog();
-      } else {
-        _navegador = PersonalData();
-      }
-    }).catchError((onError) {
-      print('Something has gone wrong, please try later');
-    });
-  }
-
-  Future<bool> _smsCodeDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Ingrese su codigo de verificacion"),
-            content: VerificationCodeInput(
-              keyboardType: TextInputType.number,
-              length: 6,
-              autofocus: true,
-              onCompleted: (String value) {
-                smsCode = value;
-              },
-            ),
-            contentPadding: EdgeInsets.all(10),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  _auth.currentUser().then((user) {
-                    if (user != null) {
-                      _auth.signOut().then((value) {
-                        signInWithPhoneNumber().then((value) => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => _navegador))
-                                .catchError((onError) {
-                              showAlert(onError, context);
-                            }));
-                      });
-                      Navigator.of(context).pop();
-                    } else {
-                      Navigator.of(context).pop();
-                      signInWithPhoneNumber().then((value) => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => _navegador))
-                              .catchError((onError) {
-                            showAlert(onError, context);
-                          }));
-                    }
-                  });
-                },
-                child: Text("Done"),
-              ),
-            ],
-          );
-        });
+  Future _navigators(context, Widget page) {
+    return Navigator.push(
+        context, MaterialPageRoute(builder: (context) => page));
   }
 
   // +57 3004896662
   //menuchef46@gmail.com
-  //--------------INICIO DE SESION CON FACEBOOK----------------------------------------------------------------------------
+  //--------------INICIO DE SESION CON FACEBOOK------------------------------------------------
   Future<void> loginWithFacebook(BuildContext context) async {
     FacebookLoginResult result =
         await facebookLogin.logIn(['email', 'public_profile']);
@@ -135,12 +30,21 @@ class Validators {
             accessToken: facebookAccessToken.token);
         _auth.currentUser().then((value) async {
           if (value != null) {
-            value.linkWithCredential(authCredential);
+            value
+                .linkWithCredential(authCredential)
+                .then((value) =>
+                    showAlert("Cuenta vinculada exitosamente.", context))
+                .catchError((e) => showAlert(e, context));
           } else {
             final faceEmail = await getProfile(facebookAccessToken);
             _auth.fetchSignInMethodsForEmail(email: faceEmail).then((value) {
               if (value != null && value.length > 0) {
-                _auth.signInWithCredential(authCredential);
+                if (value.contains("facebook.com")) {
+                  _auth.signInWithCredential(authCredential);
+                  _navigators(context, IsLog());
+                } else {
+                  showAlert("Este correo ya se encuentra registrado", context);
+                }
               } else {
                 showAlert("Debes registrarte primero", context);
               }
@@ -151,7 +55,7 @@ class Validators {
       case FacebookLoginStatus.cancelledByUser:
         break;
       case FacebookLoginStatus.error:
-        showAlert("Fallo al iniciar, intente de nuevo.", context);
+        showAlert(result.errorMessage, context);
         break;
     }
   }
@@ -165,7 +69,7 @@ class Validators {
     return correo;
   }
 
-  //--------------INICIO DE SESION CON GOOGLE------------------------------------------------------------------------------
+  //--------------INICIO DE SESION CON GOOGLE------------------------------------------------------
   Future<void> logInWithGoogle(BuildContext context) async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
@@ -176,11 +80,24 @@ class Validators {
     );
     _auth.currentUser().then((value) {
       if (value != null) {
-        value.linkWithCredential(credential);
+        if (googleUser.email == value.email) {
+          value
+              .linkWithCredential(credential)
+              .then((value) =>
+                  showAlert("Cuenta vinculada exitosamente.", context))
+              .catchError((e) => showAlert(e, context));
+        } else {
+          showAlert("El corrreo no coincide.", context);
+        }
       } else {
         _auth.fetchSignInMethodsForEmail(email: googleUser.email).then((value) {
           if (value != null && value.length > 0) {
-            _auth.signInWithCredential(credential);
+            if (value.contains("google.com")) {
+              _auth.signInWithCredential(credential);
+              _navigators(context, IsLog());
+            } else {
+              showAlert("Este correo ya se encuentra registrado", context);
+            }
           } else {
             showAlert("Debes registrarte primero", context);
           }

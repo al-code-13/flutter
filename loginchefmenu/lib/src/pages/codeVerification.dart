@@ -81,7 +81,7 @@ class CodeVerificationState extends State<CodeVerification> {
                   ),
                   onPressed: snapshot.hasData
                       ? () {
-                          validators.signInWithPhoneNumber();
+                          // validators.signInWithPhoneNumber();
                         }
                       : null),
             ),

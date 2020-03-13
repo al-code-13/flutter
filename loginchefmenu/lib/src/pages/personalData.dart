@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:loginchefmenu/src/bloc/login_bloc.dart';
 import 'package:loginchefmenu/src/bloc/provider.dart';
 import 'package:loginchefmenu/src/pages/createBackground.dart';
-import 'package:loginchefmenu/src/pages/otherMethods.dart';
-import 'package:loginchefmenu/src/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'futures/validators.dart';
@@ -24,20 +22,18 @@ class _PersonalDataState extends State<PersonalData> {
   bool vivblePass = false;
   Map crendetials;
   String phoneBloc;
-  Future<AuthCredential> getPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    String verificationId = prefs.getString("verificationId");
-    String smsCodes = prefs.getString("smsCode");
-    final phoneCredential = await PhoneAuthProvider.getCredential(
-        verificationId: verificationId, smsCode: smsCodes);
-    return phoneCredential;
-  }
-
 //------------------Crear usuario con email y password---------------------------------------------------------------------
-  Future<FirebaseUser> _signUpWithEmail(String email, String password) async {
-    _auth.currentUser().then((value) => value.linkWithCredential(
-        EmailAuthProvider.getCredential(
-            email: email, password: password)));
+  Future<void> _signUpWithEmail(String email, String password) async {
+    _auth
+        .currentUser()
+        .then((value) => value.linkWithCredential(
+            EmailAuthProvider.getCredential(email: email, password: password)))
+        .then((value) {
+      validators.showAlert("Email vinculado exitosamente.", context);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => IsLog()));
+    }).catchError((error) {
+      validators.showAlert(error, context);
+    });
   }
 
   @override
@@ -161,9 +157,7 @@ class _PersonalDataState extends State<PersonalData> {
                 ),
               ),
               onPressed: () {
-                _signUpWithEmail(bloc.email, bloc.password).then((value) =>
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => IsLog())));
+                _signUpWithEmail(bloc.email, bloc.password);
 
                 setState(() {
                   // emailBloc = bloc.email;

@@ -21,7 +21,7 @@ class LoginBloc with InputValidator {
   // Delete Data Stream
 
   Stream<bool> get formValidStream =>
-      CombineLatestStream.combine3(emailStream, passwordStream,phoneStream, (e, p, w) => true);
+      CombineLatestStream.combine2(emailStream, passwordStream, (e, p) => true);
 
 
   // insertar datos al stream

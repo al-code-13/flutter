@@ -8,6 +8,7 @@ import 'package:loginchefmenu/src/pages/personalData.dart';
 import 'package:loginchefmenu/src/pages/phoneNumberPage.dart';
 
 import 'futures/validators.dart';
+import 'isLog.dart';
 
 class OtherMethods extends StatefulWidget {
   OtherMethods({Key key}) : super(key: key);
@@ -20,11 +21,23 @@ class _OtherMethodsState extends State<OtherMethods> {
   final _validators = Validators();
   bool accept = false;
   FirebaseAuth _auth = FirebaseAuth.instance;
+  ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {}
+    });
+  }
 
   //--------------INICIO DE SESION CON EMAIL Y PASSWORD--------------------------------------------------------------------
   Future<FirebaseUser> _logInEmail(String email, String password) async {
     AuthResult result = await _auth
         .signInWithEmailAndPassword(email: email, password: password)
+        .then((value) => Navigator.push(
+            context, MaterialPageRoute(builder: (context) => IsLog())))
         .catchError((e) {
       _validators.showAlert("Usuario o contraseña invalidos", context);
     });
@@ -35,102 +48,86 @@ class _OtherMethodsState extends State<OtherMethods> {
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          CreateBackground().createBigBackground(context),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.45,
-            left: MediaQuery.of(context).size.width * 0.05,
-            child: Row(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PhoneNumberPage()));
-                  },
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.black54,
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
+            children: <Widget>[
+              CreateBackground().createBigBackground(context),
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.45,
+                left: MediaQuery.of(context).size.width * 0.05,
+                child: Row(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PhoneNumberPage()));
+                      },
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    Text(
+                      "Bienvenido de nuevo",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54),
+                    )
+                  ],
+                ),
+              ),
+              Positioned(
+                left: MediaQuery.of(context).size.width * 0.08,
+                top: MediaQuery.of(context).size.height * 0.5,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Column(
+                    children: <Widget>[
+                      _email(bloc),
+                      _password(bloc),
+                    ],
                   ),
                 ),
-                Text(
-                  "Bienvenido de nuevo",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54),
-                )
-              ],
-            ),
-          ),
-          Positioned(
-            left: MediaQuery.of(context).size.width * 0.08,
-            top: MediaQuery.of(context).size.height * 0.5,
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: Column(
-                children: <Widget>[
-                  _email(bloc),
-                  _password(bloc),
-                ],
               ),
-            ),
-          ),
-          _loginButton(bloc),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.77,
-            left: MediaQuery.of(context).size.width * 0.12,
-            right: MediaQuery.of(context).size.width * 0.12,
-            child: FacebookSignInButton(
-              borderRadius: 5,
-              onPressed: () {
-                _validators.loginWithFacebook(context);
-              },
-              text: "Continuar con Facebook",
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.83,
-            left: MediaQuery.of(context).size.width * 0.12,
-            right: MediaQuery.of(context).size.width * 0.12,
-            child: GoogleSignInButton(
-              borderRadius: 5,
-              onPressed: () async {
-                _validators.logInWithGoogle(context).then((value) => {});
-              },
-              text: "   Continuar con Google   ",
-            ),
-          ),
-          Positioned(
-            left: MediaQuery.of(context).size.width * 0.05,
-            bottom: MediaQuery.of(context).size.height * 0.02,
-            child: Row(
-              children: <Widget>[
-                Checkbox(
-                  activeColor: Colors.green,
-                  checkColor: Colors.white,
-                  value: accept,
-                  onChanged: (value) {
-                    setState(() {
-                      accept = !accept;
-                    });
+              _loginButton(bloc),
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.77,
+                left: MediaQuery.of(context).size.width * 0.12,
+                right: MediaQuery.of(context).size.width * 0.12,
+                child: FacebookSignInButton(
+                  borderRadius: 5,
+                  onPressed: () {
+                    _validators.loginWithFacebook(context);
                   },
+                  text: "Continuar con Facebook",
                 ),
-                Text(
-                  "Acepto terminos y condiciones",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.83,
+                left: MediaQuery.of(context).size.width * 0.12,
+                right: MediaQuery.of(context).size.width * 0.12,
+                child: GoogleSignInButton(
+                  borderRadius: 5,
+                  onPressed: () async {
+                    _validators.logInWithGoogle(context).then((value) => {});
+                  },
+                  text: "   Continuar con Google   ",
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
-  //+57300
+
   //------------------Crear input del email con validacion en bloc ----------------------------------------------------------
   Widget _email(LoginBloc bloc) {
     return StreamBuilder(
@@ -138,13 +135,18 @@ class _OtherMethodsState extends State<OtherMethods> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Container(
           child: TextField(
+            onTap: () {
+              _scrollController.animateTo(
+                  (MediaQuery.of(context).size.height * 0.34),
+                  curve: Curves.fastOutSlowIn,
+                  duration: Duration(milliseconds: 1600));
+            },
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               icon: Icon(
                 Icons.mail_outline,
                 color: Colors.green,
               ),
-              hintText: 'example@example.com',
               labelText: 'Correo Electronico',
               errorText: snapshot.error,
               counterText: snapshot.data,
@@ -163,15 +165,19 @@ class _OtherMethodsState extends State<OtherMethods> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Container(
           child: TextField(
+            onTap: () {
+              _scrollController.animateTo(
+                  (MediaQuery.of(context).size.height * 0.34),
+                  curve: Curves.fastOutSlowIn,
+                  duration: Duration(milliseconds: 1600));
+            },
             obscureText: true,
             decoration: InputDecoration(
                 icon: Icon(
                   Icons.lock_outline,
                   color: Colors.green,
                 ),
-                hintText: "****",
                 labelText: 'Contraseña',
-                //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: bloc.changePassword,
           ),
@@ -204,15 +210,7 @@ class _OtherMethodsState extends State<OtherMethods> {
             ),
             onPressed: snapshot.hasData
                 ? () {
-                    // _logInEmail(bloc.email, bloc.password).then((user) {
-                    //   isLogged = true;
-                    //   myUser = user;
-                    //   currentSesion = 'Email';
-                    //   setState(() {
-                    //     emailBloc = bloc.email;
-                    //     passwordBloc = bloc.password;
-                    //   });
-                    // });
+                    _logInEmail(bloc.email, bloc.password);
                   }
                 : null,
           ),

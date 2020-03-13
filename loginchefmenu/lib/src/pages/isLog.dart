@@ -16,7 +16,8 @@ class IsLog extends StatefulWidget {
 
 class _IsLogState extends State<IsLog> {
   final _validators = Validators();
-
+  TextStyle style=TextStyle(fontSize: 18,fontWeight: FontWeight.bold);
+  TextStyle style2=TextStyle(fontSize: 20,);
   FirebaseAuth _auth = FirebaseAuth.instance;
   //------------------Cerrar sesion validando cual fue el metodo de inicio --------------------------------------------------
   void _logOut() async {
@@ -28,84 +29,70 @@ class _IsLogState extends State<IsLog> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          CreateBackground().createSlimBackground(context),
+          CreateBackground().createMediumBackground(context),
           Positioned(
+            top: MediaQuery.of(context).size.height * 0.15,
+            left: MediaQuery.of(context).size.width * 0.25,
+            child: CircleAvatar(
+              maxRadius: 110,
+              backgroundImage: NetworkImage(
+                  "https://thumbs.dreamstime.com/z/restaurante-logotipo-del-vector-del-caf%C3%A9-men%C3%BA-plato-comida-o-cocinero-icono-del-cocinero-69996518.jpg"),
+            ),
+          ),
+          Positioned(
+              top: MediaQuery.of(context).size.height * 0.5,
+              left: MediaQuery.of(context).size.width * 0.15,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("Nombre:",style: style,textAlign: TextAlign.left),
+                  Text("Chef Menu",style: style2,textAlign: TextAlign.left),
+                  SizedBox(height: 16,),
+                  Text("Correo electrónico:",style: style,textAlign: TextAlign.left),
+                  Text("menuchef46@gmail.com",style: style2,textAlign: TextAlign.left),
+                ],
+              )),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.75,
+            left: MediaQuery.of(context).size.width * 0.12,
+            right: MediaQuery.of(context).size.width * 0.12,
             child: Column(
               children: <Widget>[
-                SafeArea(
+                FacebookSignInButton(
+                  borderRadius: 5,
+                  onPressed: () {
+                    _validators.loginWithFacebook(context);
+                  },
+                  text: "Continuar con Facebook",
+                ),
+                GoogleSignInButton(
+                  borderRadius: 5,
+                  onPressed: () async {
+                    _validators.logInWithGoogle(context).then((value) => {});
+                  },
+                  text: "   Continuar con Google   ",
+                ),
+                RaisedButton(
+                  textColor: Colors.white,
                   child: Container(
-                    height: 180,
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                    child: Text("Cerrar Sesión"),
                   ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  margin: EdgeInsets.symmetric(vertical: 30),
-                  padding: EdgeInsets.symmetric(vertical: 50),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 3.0,
-                        offset: Offset(0.0, 5.0),
-                        spreadRadius: 3,
-                      )
-                    ],
                   ),
-                  child: Column(
-                    children: <Widget>[
-                      RaisedButton(
-                        textColor: Colors.white,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 80, vertical: 15),
-                          child: Text("Cerrar Sesión"),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        elevation: 0,
-                        color: Colors.deepPurple,
-                        onPressed: () {
-                          _logOut();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PhoneNumberPage()));
-                        },
-                      ),
-                    ],
-                  ),
+                  elevation: 0,
+                  color: Colors.deepPurple,
+                  onPressed: () {
+                    _logOut();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PhoneNumberPage()));
+                  },
                 ),
-                SizedBox(
-                  height: 100,
-                )
               ],
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.77,
-            left: MediaQuery.of(context).size.width * 0.12,
-            right: MediaQuery.of(context).size.width * 0.12,
-            child: FacebookSignInButton(
-              borderRadius: 5,
-              onPressed: () {
-                _validators.loginWithFacebook(context);
-              },
-              text: "Continuar con Facebook",
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.83,
-            left: MediaQuery.of(context).size.width * 0.12,
-            right: MediaQuery.of(context).size.width * 0.12,
-            child: GoogleSignInButton(
-              borderRadius: 5,
-              onPressed: () async {
-                _validators.logInWithGoogle(context).then((value) => {});
-              },
-              text: "   Continuar con Google   ",
             ),
           ),
         ],
