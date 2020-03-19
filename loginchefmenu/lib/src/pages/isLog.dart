@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_bloc.dart';
 import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_event.dart';
 import 'package:loginchefmenu/src/pages/utils/createBackground.dart';
+import 'package:loginchefmenu/src/repository/user_repository.dart';
 
 class IsLog extends StatefulWidget {
   final FirebaseUser user;
@@ -62,12 +63,14 @@ class _IsLogState extends State<IsLog> {
                 FacebookSignInButton(
                   borderRadius: 5,
                   onPressed: () {
+                    UserRepository().loginWithFacebook();
                   },
                   text: "Continuar con Facebook",
                 ),
                 GoogleSignInButton(
                   borderRadius: 5,
                   onPressed: () async {
+                    UserRepository().signInWithGoogle();
                   },
                   text: "   Continuar con Google   ",
                 ),
@@ -84,6 +87,7 @@ class _IsLogState extends State<IsLog> {
                   elevation: 0,
                   color: Colors.deepPurple,
                   onPressed: () {
+                    UserRepository().signOut();
                     BlocProvider.of<AuthenticationBloc>(context)
                         .add(LoggedOut());
                   },

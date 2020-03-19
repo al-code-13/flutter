@@ -1,14 +1,13 @@
 //imports
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:loginchefmenu/src/bloc/authentication_bloc/bloc.dart';
-import 'dart:convert';
-
-import 'package:loginchefmenu/src/bloc/login_bloc/bloc.dart';
 
 class UserRepository {
   final FirebaseAuth _auth;
@@ -24,7 +23,7 @@ class UserRepository {
         _googleSignIn = googleSignIn ?? GoogleSignIn(),
         _facebookLogin = facebookLogin ?? FacebookLogin();
   //SignInWithGoogle
-  Future<FirebaseUser> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
@@ -40,11 +39,9 @@ class UserRepository {
               "Cuenta vinculada exitosamente.",
             );
             return value;
-          }).catchError((e) => throw(e));
+          }).catchError((e) => throw (e));
         } else {
-          throw(
-            "El corrreo no coincide."
-          );
+          throw ("El corrreo no coincide.");
         }
       } else {
         _auth.fetchSignInMethodsForEmail(email: googleUser.email).then((value) {
@@ -54,14 +51,10 @@ class UserRepository {
                 return value;
               });
             } else {
-              throw(
-                "Este correo ya se encuentra registrado"
-              );
+              throw ("Este correo ya se encuentra registrado");
             }
           } else {
-            throw(
-              "Debes registrarte primero"
-            );
+            throw ("Debes registrarte primero");
           }
         });
       }
@@ -69,7 +62,7 @@ class UserRepository {
   }
 
   //SignInWithFacebook
-  Future<FirebaseUser> loginWithFacebook() async {
+  Future<void> loginWithFacebook() async {
     FacebookLoginResult result =
         await _facebookLogin.logIn(['email', 'public_profile']);
     switch (result.status) {
@@ -84,7 +77,7 @@ class UserRepository {
                 "Cuenta vinculada exitosamente.",
               );
               return value;
-            }).catchError((e) => throw(e));
+            }).catchError((e) => throw (e));
           } else {
             final faceEmail = await getProfile(facebookAccessToken);
             _auth.fetchSignInMethodsForEmail(email: faceEmail).then((value) {
@@ -94,14 +87,10 @@ class UserRepository {
                     return user;
                   });
                 } else {
-                  throw(
-                    "Este correo ya se encuentra registrado"
-                  );
+                  throw ("Este correo ya se encuentra registrado");
                 }
               } else {
-                throw(
-                  "Debes registrarte primero"
-                );
+                throw ("Debes registrarte primero");
               }
             });
           }
@@ -110,9 +99,7 @@ class UserRepository {
       case FacebookLoginStatus.cancelledByUser:
         break;
       case FacebookLoginStatus.error:
-        throw(
-          result.errorMessage
-        );
+        throw (result.errorMessage);
         break;
     }
   }
@@ -129,7 +116,7 @@ class UserRepository {
 //Verificacion con numero de telefono
   String smsCode;
   String phoneVerificationId;
-  Future<void> verifyPhone(String phone,context) async {
+  Future<void> verifyPhone(String phone, context) async {
     final PhoneCodeAutoRetrievalTimeout autoRetrive = (String verId) {
       phoneVerificationId = verId;
     };
@@ -142,25 +129,26 @@ class UserRepository {
       _auth.signInWithCredential(auth).then((value) {
         if (value.user != null) {
           if (value.user.email != null) {
-          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+            BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
           } else {
-          BlocProvider.of<AuthenticationBloc>(context).add(LoggedInWithOutEmail());
+            BlocProvider.of<AuthenticationBloc>(context)
+                .add(LoggedInWithOutEmail());
           }
           return value.user;
         } else {
-          throw('Invalid code/invalid authentication');
+          throw ('Invalid code/invalid authentication');
         }
       }).catchError((error) {
-        throw('Something has gone wrong, please try later auto verificacion');
+        throw ('Something has gone wrong, please try later auto verificacion');
       });
     };
     final PhoneVerificationFailed verifiedFailed = (AuthException exception) {
       if (exception.message.contains('not authorized'))
-        throw('}no se encuentra autorizado para realizar esta accion.');
+        throw ('}no se encuentra autorizado para realizar esta accion.');
       else if (exception.message.contains('Network'))
-        throw('Por favor revise su conexion a internet e intentelo de nuevo');
+        throw ('Por favor revise su conexion a internet e intentelo de nuevo');
       else
-        throw('Algo salio mal, intente mas tarde.');
+        throw ('Algo salio mal, intente mas tarde.');
     };
     await _auth.verifyPhoneNumber(
       phoneNumber: phone,
@@ -177,12 +165,14 @@ class UserRepository {
         verificationId: phoneVerificationId, smsCode: smsCode);
     _auth.signInWithCredential(phoneCredential).then((value) {
       if (value.user.email != null) {
-          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+        print(value.user.email);
+        BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
       } else {
-          BlocProvider.of<AuthenticationBloc>(context).add(LoggedInWithOutEmail());
+        BlocProvider.of<AuthenticationBloc>(context)
+            .add(LoggedInWithOutEmail());
       }
     }).catchError((onError) {
-      throw('Algo salio mal, por favor intentalo de nuevo');
+      throw ('Algo salio mal, por favor intentalo de nuevo');
     });
   }
 

@@ -26,6 +26,7 @@ class _PersonalDataState extends State<PersonalData> {
 
   bool get isPopulated =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+
   bool isLoginButtonEnable(LoginState state) {
     return state.isFormValid && isPopulated && !state.isSubmitting;
   }
@@ -60,149 +61,141 @@ class _PersonalDataState extends State<PersonalData> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocProvider<LoginBloc>(
-        create: (context) => LoginBloc(userRepository: _userRepository),
-        child: BlocListener<LoginBloc, LoginState>(
-          listener: (context, state) {
-            if (state.isFailure) {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Fallo al Iniciar Sesión"),
-                        Icon(Icons.error),
-                      ],
-                    ),
-                    backgroundColor: Colors.red,
+    return BlocListener<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state.isFailure) {
+          Scaffold.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Fallo al Iniciar Sesión"),
+                    Icon(Icons.error),
+                  ],
+                ),
+                backgroundColor: Colors.red,
+              ),
+            );
+        }
+        if (state.isSubmitting) {
+          Scaffold.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Iniciando Sesión..."),
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+            );
+        }
+        if (state.isSuccess) {
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+        }
+      },
+      child: BlocBuilder<LoginBloc, LoginState>(
+        builder: (context, state) {
+          return Stack(
+            children: <Widget>[
+              CreateBackground().createSlimBackground(context),
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.16,
+                left: MediaQuery.of(context).size.width * 0.05,
+                child: Text(
+                  "Bienvenido",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-            }
-            if (state.isSubmitting) {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Iniciando Sesión..."),
-                        CircularProgressIndicator(),
-                      ],
-                    ),
-                  ),
-                );
-            }
-            if (state.isSuccess) {
-              BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
-            }
-          },
-          child: BlocBuilder<LoginBloc, LoginState>(
-            builder: (context, state) {
-              return Stack(
-                children: <Widget>[
-                  CreateBackground().createSlimBackground(context),
-                  Positioned(
-                    top: MediaQuery.of(context).size.height * 0.16,
-                    left: MediaQuery.of(context).size.width * 0.05,
-                    child: Text(
-                      "Bienvenido",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: MediaQuery.of(context).size.width * 0.08,
-                    top: MediaQuery.of(context).size.height * 0.22,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: Column(
-                        children: <Widget>[
-                          TextField(
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              icon: Icon(
-                                Icons.person_outline,
-                                color: Colors.green,
-                              ),
-                              hintText: 'Ingrese su nombre',
-                              labelText: 'Nombre',
-                            ),
+                ),
+              ),
+              Positioned(
+                left: MediaQuery.of(context).size.width * 0.08,
+                top: MediaQuery.of(context).size.height * 0.22,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Column(
+                    children: <Widget>[
+                      TextField(
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          icon: Icon(
+                            Icons.person_outline,
+                            color: Colors.green,
                           ),
-                          TextFormField(
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                                icon: Icon(
-                                  Icons.mail_outline,
-                                  color: Colors.green,
-                                ),
-                                labelText: 'Correo Electronico',
-                                hintText: "example@example.ex"),
-                            autocorrect: false,
-                            autovalidate: true,
-                            validator: (_) {
-                              return !state.isEmailValid
-                                  ? 'Correo invalido'
-                                  : null;
-                            },
-                          ),
-                          TextFormField(
-                            controller: _passwordController,
-                            keyboardType: TextInputType.visiblePassword,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              icon: Icon(
-                                Icons.lock_outline,
-                                color: Colors.green,
-                              ),
-                              labelText: 'Contraseña',
-                            ),
-                            autovalidate: true,
-                            autocorrect: false,
-                            validator: (_) {
-                              return !state.isPasswordValid
-                                  ? 'Contraseña invalida'
-                                  : null;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: MediaQuery.of(context).size.height * 0.48,
-                    left: MediaQuery.of(context).size.width * 0.16,
-                    right: MediaQuery.of(context).size.width * 0.16,
-                    child: RaisedButton(
-                      color: Colors.green,
-                      textColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32),
-                      ),
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                        child: Text(
-                          "Continuar",
-                          style: TextStyle(fontSize: 24),
+                          hintText: 'Ingrese su nombre',
+                          labelText: 'Nombre',
                         ),
                       ),
-                      onPressed:
-                          isLoginButtonEnable(state) ? _onFormSubmitted : null,
+                      TextFormField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          icon: Icon(
+                            Icons.mail_outline,
+                            color: Colors.green,
+                          ),
+                          labelText: 'Correo Electronico',
+                          hintText: "example@example.ex",
+                        ),
+                        autocorrect: false,
+                        autovalidate: true,
+                        validator: (_) {
+                          return !state.isEmailValid ? 'Correo invalido' : null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          icon: Icon(
+                            Icons.lock_outline,
+                            color: Colors.green,
+                          ),
+                          labelText: 'Contraseña',
+                        ),
+                        obscureText: true,
+                        autovalidate: true,
+                        autocorrect: false,
+                        validator: (_) {
+                          return !state.isPasswordValid
+                              ? 'Invalid Password'
+                              : null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.48,
+                left: MediaQuery.of(context).size.width * 0.16,
+                right: MediaQuery.of(context).size.width * 0.16,
+                child: RaisedButton(
+                  color: Colors.green,
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    child: Text(
+                      "Continuar",
+                      style: TextStyle(fontSize: 24),
                     ),
                   ),
-                ],
-              );
-            },
-          ),
-        ),
+                  onPressed:
+                      isLoginButtonEnable(state) ? _onFormSubmitted : null,
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

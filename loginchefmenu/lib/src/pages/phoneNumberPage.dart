@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:loginchefmenu/src/bloc/authentication_bloc/bloc.dart';
 import 'package:loginchefmenu/src/bloc/login_bloc/bloc.dart';
 import 'package:loginchefmenu/src/pages/utils/pinInput.dart';
 import 'package:loginchefmenu/src/repository/user_repository.dart';
@@ -80,7 +79,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
           sent = true;
         }
         if (state.isSuccess) {
-          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+          //BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
