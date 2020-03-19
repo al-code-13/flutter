@@ -1,10 +1,14 @@
 //imports
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:loginchefmenu/src/bloc/authentication_bloc/bloc.dart';
 import 'dart:convert';
+
+import 'package:loginchefmenu/src/bloc/login_bloc/bloc.dart';
 
 class UserRepository {
   final FirebaseAuth _auth;
@@ -36,10 +40,10 @@ class UserRepository {
               "Cuenta vinculada exitosamente.",
             );
             return value;
-          }).catchError((e) => print(e));
+          }).catchError((e) => throw(e));
         } else {
-          print(
-            "El corrreo no coincide.",
+          throw(
+            "El corrreo no coincide."
           );
         }
       } else {
@@ -50,13 +54,13 @@ class UserRepository {
                 return value;
               });
             } else {
-              print(
-                "Este correo ya se encuentra registrado",
+              throw(
+                "Este correo ya se encuentra registrado"
               );
             }
           } else {
-            print(
-              "Debes registrarte primero",
+            throw(
+              "Debes registrarte primero"
             );
           }
         });
@@ -80,7 +84,7 @@ class UserRepository {
                 "Cuenta vinculada exitosamente.",
               );
               return value;
-            }).catchError((e) => print(e));
+            }).catchError((e) => throw(e));
           } else {
             final faceEmail = await getProfile(facebookAccessToken);
             _auth.fetchSignInMethodsForEmail(email: faceEmail).then((value) {
@@ -90,13 +94,13 @@ class UserRepository {
                     return user;
                   });
                 } else {
-                  print(
-                    "Este correo ya se encuentra registrado",
+                  throw(
+                    "Este correo ya se encuentra registrado"
                   );
                 }
               } else {
-                print(
-                  "Debes registrarte primero",
+                throw(
+                  "Debes registrarte primero"
                 );
               }
             });
@@ -106,8 +110,8 @@ class UserRepository {
       case FacebookLoginStatus.cancelledByUser:
         break;
       case FacebookLoginStatus.error:
-        print(
-          result.errorMessage,
+        throw(
+          result.errorMessage
         );
         break;
     }
@@ -125,7 +129,7 @@ class UserRepository {
 //Verificacion con numero de telefono
   String smsCode;
   String phoneVerificationId;
-  Future<void> verifyPhone(String phone) async {
+  Future<void> verifyPhone(String phone,context) async {
     final PhoneCodeAutoRetrievalTimeout autoRetrive = (String verId) {
       phoneVerificationId = verId;
     };
@@ -137,24 +141,26 @@ class UserRepository {
     final PhoneVerificationCompleted verifiedSuccess = (AuthCredential auth) {
       _auth.signInWithCredential(auth).then((value) {
         if (value.user != null) {
-          print("Autenticacion vergas");
           if (value.user.email != null) {
-          } else {}
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+          } else {
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedInWithOutEmail());
+          }
           return value.user;
         } else {
-          print('Invalid code/invalid authentication');
+          throw('Invalid code/invalid authentication');
         }
       }).catchError((error) {
-        print('Something has gone wrong, please try later');
+        throw('Something has gone wrong, please try later auto verificacion');
       });
     };
     final PhoneVerificationFailed verifiedFailed = (AuthException exception) {
       if (exception.message.contains('not authorized'))
-        print('Something has gone wrong, please try later');
+        throw('}no se encuentra autorizado para realizar esta accion.');
       else if (exception.message.contains('Network'))
-        print('Please check your internet connection and try again');
+        throw('Por favor revise su conexion a internet e intentelo de nuevo');
       else
-        print('Something has gone wrong, please try later');
+        throw('Algo salio mal, intente mas tarde.');
     };
     await _auth.verifyPhoneNumber(
       phoneNumber: phone,
@@ -171,9 +177,12 @@ class UserRepository {
         verificationId: phoneVerificationId, smsCode: smsCode);
     _auth.signInWithCredential(phoneCredential).then((value) {
       if (value.user.email != null) {
-      } else {}
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+      } else {
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedInWithOutEmail());
+      }
     }).catchError((onError) {
-      print('Something has gone wrong, please try later');
+      throw('Algo salio mal, por favor intentalo de nuevo');
     });
   }
 

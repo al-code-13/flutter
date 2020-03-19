@@ -8,13 +8,14 @@ import 'package:loginchefmenu/src/pages/utils/createBackground.dart';
 
 class IsLog extends StatefulWidget {
   final FirebaseUser user;
-  IsLog({Key key, @required this.user}) : super(key: key);
+  IsLog({Key key, @required this.user}) :assert(user!=null), super(key: key);
 
   @override
   _IsLogState createState() => _IsLogState();
 }
 
 class _IsLogState extends State<IsLog> {
+  FirebaseUser get _user => widget.user;
   TextStyle style = TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   TextStyle style2 = TextStyle(
     fontSize: 20,
@@ -42,13 +43,13 @@ class _IsLogState extends State<IsLog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text("Nombre:", style: style, textAlign: TextAlign.left),
-                  Text("Chef Menu", style: style2, textAlign: TextAlign.left),
+                  Text("${_user.displayName}", style: style2, textAlign: TextAlign.left),
                   SizedBox(
                     height: 16,
                   ),
                   Text("Correo electrónico:",
                       style: style, textAlign: TextAlign.left),
-                  Text("menuchef46@gmail.com",
+                  Text("${_user.email}",
                       style: style2, textAlign: TextAlign.left),
                 ],
               )),

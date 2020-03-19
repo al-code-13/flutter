@@ -7,7 +7,7 @@ class SplassScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("Cargando los datos del usuario..."),
+        child: Image.network('https://thumbs.gfycat.com/UntidyLinearCranefly-size_restricted.gif'),
       ),
     );
   }

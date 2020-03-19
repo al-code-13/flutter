@@ -1,4 +1,4 @@
-class Validators{
+class Validators {
   // Crear regExp
   // Email:
   static final RegExp _emailRegExp = RegExp(
@@ -10,24 +10,27 @@ class Validators{
   );
   // Phone:
   static final RegExp _phoneRegExp = RegExp(
-    r'(^(?:[+0]9)?[0-9]{10,12}$)',
+    r'(^(?:[+57]9)?[0-9]{10,12}$)',
   );
 
   // 3 funciones:
 
   // isValidEmail
-  static isValidEmail(String email){
+  static isValidEmail(String email) {
     return _emailRegExp.hasMatch(email);
   }
 
   // isValidPassword
-  static isValidPassword(String password){
+  static isValidPassword(String password) {
     return _passwordRegExp.hasMatch(password);
   }
-  
+
   // isValidPhone
-  static isValidPhone(String phone){
-    return _phoneRegExp.hasMatch(phone);
+  static isValidPhone(String phone) {
+    if (phone.length > 10) {
+      return true;
+    } else {
+      return false;
+    }
   }
-  
 }

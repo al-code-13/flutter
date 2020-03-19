@@ -5,6 +5,7 @@ import 'package:loginchefmenu/src/bloc/authentication_bloc/bloc.dart';
 import 'package:loginchefmenu/src/bloc/login_bloc/bloc.dart';
 import 'package:loginchefmenu/src/pages/utils/createBackground.dart';
 import 'package:loginchefmenu/src/repository/user_repository.dart';
+import 'package:loginchefmenu/src/ui/login_screen.dart';
 
 class OtherMethods extends StatefulWidget {
   final UserRepository _userRepository;
@@ -118,7 +119,13 @@ class _OtherMethodsState extends State<OtherMethods> {
                     child: Row(
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginScreen(
+                                        userRepository: _userRepository)));
+                          },
                           child: Icon(
                             Icons.arrow_back_ios,
                             color: Colors.black54,

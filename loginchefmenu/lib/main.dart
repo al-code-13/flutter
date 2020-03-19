@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'src/bloc/authentication_bloc/bloc.dart';
-import 'src/bloc/authentication_bloc/simple_bloc_delegate.dart';
-import 'src/pages/isLog.dart';
-import 'src/repository/user_repository.dart';
-import 'src/ui/login_screen.dart';
-import 'src/ui/splash_screen.dart';
-
-
+import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_bloc.dart';
+import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_event.dart';
+import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_state.dart';
+import 'package:loginchefmenu/src/bloc/authentication_bloc/simple_bloc_delegate.dart';
+import 'package:loginchefmenu/src/pages/isLog.dart';
+import 'package:loginchefmenu/src/pages/personalData.dart';
+import 'package:loginchefmenu/src/repository/user_repository.dart';
+import 'package:loginchefmenu/src/ui/login_screen.dart';
+import 'package:loginchefmenu/src/ui/splash_screen.dart';
 
 void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   BlocSupervisor.delegate = SimpleBlocDelegate();
   final UserRepository userRepository = UserRepository();
   runApp(
@@ -41,6 +41,9 @@ class App extends StatelessWidget {
         } 
          if (state is Authenticated) {
           return IsLog(user:state.user);
+        } 
+         if (state is AuthenticatedWithOutEmail) {
+          return PersonalData(userRepository: _userRepository,);
         } 
         if(state is Unauthenticated){
           return LoginScreen(userRepository: _userRepository,);

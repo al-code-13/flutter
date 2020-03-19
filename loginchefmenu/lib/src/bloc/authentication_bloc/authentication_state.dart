@@ -10,12 +10,11 @@ abstract class AuthenticationState extends Equatable {
 
 //tres estados
 //No inicializado -> Splash Screen
-// Autenticado -> Home
-//No autentocadp -> Login
 class Uninitialized extends AuthenticationState {
   @override
   String toString() => 'No Inicializado';
 }
+// Autenticado -> Home
 class Authenticated extends AuthenticationState {
   final FirebaseUser user;
   const Authenticated(this.user);
@@ -24,6 +23,12 @@ class Authenticated extends AuthenticationState {
   @override
   String toString() => 'Autenticado - displayName : $user';
 }
+//Autenticado sin email
+class AuthenticatedWithOutEmail extends AuthenticationState{
+  @override
+  String toString() =>'Autenticado sin email';
+}
+//No autentocadp -> Login
 class Unauthenticated extends AuthenticationState{
   @override
   String toString() => 'No Autenticado';

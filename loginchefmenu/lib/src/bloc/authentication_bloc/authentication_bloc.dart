@@ -21,6 +21,9 @@ class AuthenticationBloc
     if (event is LoggedIn) {
       yield* _mapLoggedInToState();
     }
+    if (event is LoggedInWithOutEmail) {
+      yield* _mapLoggedInWithOutEmailToState();
+    }
     if (event is LoggedOut) {
       yield* _mapLoggedOutToState();
     }
@@ -31,7 +34,11 @@ class AuthenticationBloc
       final isSignedIn = await _userRepository.isSignedIn();
       if (isSignedIn) {
         final user = await _userRepository.getUser();
-        yield Authenticated(user);
+        if (user.email != null) {
+          yield Authenticated(user);
+        } else {
+          yield AuthenticatedWithOutEmail();
+        }
       } else {
         yield Unauthenticated();
       }
@@ -39,11 +46,16 @@ class AuthenticationBloc
       yield Unauthenticated();
     }
   }
-  Stream<AuthenticationState>_mapLoggedInToState ()async*{
+
+  Stream<AuthenticationState> _mapLoggedInToState() async* {
     yield Authenticated(await _userRepository.getUser());
   }
-  Stream<AuthenticationState>_mapLoggedOutToState ()async*{
+
+  Stream<AuthenticationState> _mapLoggedInWithOutEmailToState() async* {
+    yield Authenticated(await _userRepository.getUser());
+  }
+
+  Stream<AuthenticationState> _mapLoggedOutToState() async* {
     yield Unauthenticated();
-    _userRepository.signOut;
   }
 }

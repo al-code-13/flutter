@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:loginchefmenu/src/utils/validators.dart';
 import 'bloc.dart';
 import 'dart:async';
@@ -41,7 +42,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield* _mapPasswordChangedToState(event.password);
     }
     if (event is LoginWithPhone) {
-      yield* _mapLoginWithPhone(phoneNumber: event.phoneNumber);
+      yield* _mapLoginWithPhone(phoneNumber: event.phoneNumber,context: event.context);
+    }
+    if (event is LoginWithPhoneSucces) {
+      yield* _mapLoginWithPhoneSuccess();
     }
     if (event is LoginWithEmailAndPassword) {
       yield* _mapLoginWithEmailAndPasswordToState(
@@ -62,6 +66,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> _mapPhoneChangedToState(String phone) async* {
     yield state.update(isValidPhone: Validators.isValidPhone(phone));
   }
+
   Stream<LoginState> _mapEmailChangedToState(String email) async* {
     yield state.update(isEmailValid: Validators.isValidEmail(email));
   }
@@ -70,12 +75,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     yield state.update(isPasswordValid: Validators.isValidPassword(password));
   }
 
-  Stream<LoginState> _mapLoginWithPhone({String phoneNumber}) async* {
+  Stream<LoginState> _mapLoginWithPhone({String phoneNumber,BuildContext context}) async* {
     yield LoginState.loading();
     try {
-      await _userRepository.verifyPhone(phoneNumber);
-      yield LoginState.success();
-    } catch (_) {
+      await _userRepository.verifyPhone(phoneNumber,context);
+    } catch (e) {
+      print(e);
       yield LoginState.failure();
     }
   }
@@ -115,7 +120,17 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       await _userRepository.loginWithFacebook();
       yield LoginState.success();
-    } catch (_) {
+    } catch (e) {
+      print(e);
+      yield LoginState.failure();
+    }
+  }
+  
+  Stream<LoginState> _mapLoginWithPhoneSuccess() async* {
+    try {
+      yield LoginState.success();
+    } catch (e) {
+      print(e);
       yield LoginState.failure();
     }
   }

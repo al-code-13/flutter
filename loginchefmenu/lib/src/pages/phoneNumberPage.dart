@@ -4,6 +4,8 @@ import 'package:loginchefmenu/src/bloc/authentication_bloc/bloc.dart';
 import 'package:loginchefmenu/src/bloc/login_bloc/bloc.dart';
 import 'package:loginchefmenu/src/pages/utils/pinInput.dart';
 import 'package:loginchefmenu/src/repository/user_repository.dart';
+import 'package:loginchefmenu/src/ui/other_methods_screen.dart';
+
 import 'utils/createBackground.dart';
 
 class PhoneNumberPage extends StatefulWidget {
@@ -44,7 +46,11 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   }
 
   void _onFormSubmitted() {
-    _loginBloc.add(LoginWithPhone(phoneNumber: _phoneController.text));
+    _loginBloc.add(LoginWithPhone(phoneNumber: _phoneController.text,context: context));
+  }
+
+  bool isLoginButtonEnable(LoginState state) {
+    return state.isValidPhone;
   }
 
   bool sent = false;
@@ -103,7 +109,8 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                             width: MediaQuery.of(context).size.width * 0.8,
                             child: TextFormField(
                               controller: _phoneController,
-                              keyboardType: TextInputType.number,
+                              keyboardType:
+                                  TextInputType.numberWithOptions(signed: true),
                               onTap: () {
                                 _scrollController.animateTo(
                                     (MediaQuery.of(context).size.height * 0.34),
@@ -145,7 +152,9 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                               style: TextStyle(fontSize: 24),
                             ),
                           ),
-                          onPressed: _onFormSubmitted,
+                          onPressed: isLoginButtonEnable(state)
+                              ? _onFormSubmitted
+                              : null,
                         ),
                       ),
                       Positioned(
@@ -153,7 +162,10 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                         left: MediaQuery.of(context).size.width * 0.29,
                         right: MediaQuery.of(context).size.width * 0.16,
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => OtherMethodsScreen(userRepository: _userRepository)));
+                          },
                           child: Text(
                             "Ingresar con otro metodo",
                             style: TextStyle(color: Colors.green),

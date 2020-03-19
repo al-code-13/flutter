@@ -6,12 +6,15 @@ abstract class AuthenticationEvent extends Equatable {
   List<Object> get props => [];
 }
 
-//Tres Eventos
+//Cuatro Eventos
 //App started
-//LoggedIn
-//LoggedOut
 class AppStarted extends AuthenticationEvent {}
 
+//LoggedIn
 class LoggedIn extends AuthenticationEvent {}
 
+//LoggedIn sin email
+class LoggedInWithOutEmail extends AuthenticationEvent {}
+
+//LoggedOut
 class LoggedOut extends AuthenticationEvent {}

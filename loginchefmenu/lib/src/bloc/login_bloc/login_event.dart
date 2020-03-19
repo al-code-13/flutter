@@ -16,9 +16,10 @@ class PhoneChanged extends LoginEvent {
   List<Object> get props => [phone];
   @override
   String toString() {
-    return 'EmailChanged {email:$phone}';
+    return 'PhoneChanged {email:$phone}';
   }
 }
+
 //Email Changed
 class EmailChanged extends LoginEvent {
   final String email;
@@ -59,14 +60,18 @@ class Submitted extends LoginEvent {
 //Login with phone number
 class LoginWithPhone extends LoginEvent {
   final String phoneNumber;
-  const LoginWithPhone({@required this.phoneNumber});
+  final BuildContext context;
+  const LoginWithPhone({@required this.phoneNumber,@required this.context});
   @override
-  List<Object> get props => [phoneNumber];
+  List<Object> get props => [phoneNumber,context];
   @override
   String toString() {
-    return 'LoginWithPhone {phoneNumber:$phoneNumber}';
+    return 'LoginWithPhone {phoneNumber:$phoneNumber,context:$context}';
   }
 }
+
+class LoginWithPhoneSucces extends LoginEvent {}
+
 //Login with email
 class LoginWithEmailAndPassword extends LoginEvent {
   final String email;
