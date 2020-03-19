@@ -28,6 +28,7 @@ class _BlocBuilderState<E, S> extends State<BlocBuilder<E, S>> {
   StreamSubscription<S> _subscription;
   S _previosState;
   S _state;
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +36,7 @@ class _BlocBuilderState<E, S> extends State<BlocBuilder<E, S>> {
     _state = widget.bloc.currentState;
     _subscribe();
   }
+  
   @override
   void dispose() {
     _unsubscribe();

@@ -1,28 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
-import 'package:loginchefmenu/src/pages/createBackground.dart';
-import 'package:loginchefmenu/src/pages/personalData.dart';
-import 'package:loginchefmenu/src/pages/phoneNumberPage.dart';
-
-import 'futures/validators.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_bloc.dart';
+import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_event.dart';
+import 'package:loginchefmenu/src/pages/utils/createBackground.dart';
 
 class IsLog extends StatefulWidget {
-  IsLog({Key key}) : super(key: key);
+  final FirebaseUser user;
+  IsLog({Key key, @required this.user}) : super(key: key);
 
   @override
   _IsLogState createState() => _IsLogState();
 }
 
 class _IsLogState extends State<IsLog> {
-  final _validators = Validators();
-  TextStyle style=TextStyle(fontSize: 18,fontWeight: FontWeight.bold);
-  TextStyle style2=TextStyle(fontSize: 20,);
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  //------------------Cerrar sesion validando cual fue el metodo de inicio --------------------------------------------------
-  void _logOut() async {
-    _auth.signOut();
-  }
+  TextStyle style = TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+  TextStyle style2 = TextStyle(
+    fontSize: 20,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +41,15 @@ class _IsLogState extends State<IsLog> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("Nombre:",style: style,textAlign: TextAlign.left),
-                  Text("Chef Menu",style: style2,textAlign: TextAlign.left),
-                  SizedBox(height: 16,),
-                  Text("Correo electrónico:",style: style,textAlign: TextAlign.left),
-                  Text("menuchef46@gmail.com",style: style2,textAlign: TextAlign.left),
+                  Text("Nombre:", style: style, textAlign: TextAlign.left),
+                  Text("Chef Menu", style: style2, textAlign: TextAlign.left),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Text("Correo electrónico:",
+                      style: style, textAlign: TextAlign.left),
+                  Text("menuchef46@gmail.com",
+                      style: style2, textAlign: TextAlign.left),
                 ],
               )),
           Positioned(
@@ -61,14 +61,12 @@ class _IsLogState extends State<IsLog> {
                 FacebookSignInButton(
                   borderRadius: 5,
                   onPressed: () {
-                    _validators.loginWithFacebook(context);
                   },
                   text: "Continuar con Facebook",
                 ),
                 GoogleSignInButton(
                   borderRadius: 5,
                   onPressed: () async {
-                    _validators.logInWithGoogle(context).then((value) => {});
                   },
                   text: "   Continuar con Google   ",
                 ),
@@ -85,11 +83,8 @@ class _IsLogState extends State<IsLog> {
                   elevation: 0,
                   color: Colors.deepPurple,
                   onPressed: () {
-                    _logOut();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PhoneNumberPage()));
+                    BlocProvider.of<AuthenticationBloc>(context)
+                        .add(LoggedOut());
                   },
                 ),
               ],
