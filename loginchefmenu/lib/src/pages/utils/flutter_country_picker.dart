@@ -219,11 +219,18 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "   Selecciona un país.",
+              style: TextStyle(fontSize: 24, color: Colors.black54),
+            ),
+          ),
           // new TextField(
           //   decoration: new InputDecoration(
           //     hintText: MaterialLocalizations.of(context).searchFieldLabel,

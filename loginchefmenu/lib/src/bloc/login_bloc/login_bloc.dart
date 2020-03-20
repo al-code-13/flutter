@@ -76,9 +76,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Stream<LoginState> _mapLoginWithPhone({String phoneNumber,BuildContext context}) async* {
-    yield LoginState.loading();
+    yield LoginState.loading(); 
     try {
       await _userRepository.verifyPhone(phoneNumber,context);
+      yield LoginState.success();
     } catch (e) {
       print(e);
       yield LoginState.failure();

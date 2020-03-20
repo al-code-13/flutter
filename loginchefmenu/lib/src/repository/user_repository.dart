@@ -144,7 +144,7 @@ class UserRepository {
     };
     final PhoneVerificationFailed verifiedFailed = (AuthException exception) {
       if (exception.message.contains('not authorized'))
-        throw ('}no se encuentra autorizado para realizar esta accion.');
+        throw ('no se encuentra autorizado para realizar esta accion.');
       else if (exception.message.contains('Network'))
         throw ('Por favor revise su conexion a internet e intentelo de nuevo');
       else

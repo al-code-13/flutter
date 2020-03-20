@@ -46,7 +46,7 @@ class App extends StatelessWidget {
           return IsLog(user:state.user);
         } 
         if(state is Unauthenticated){
-          return LoginScreen(userRepository: _userRepository,);
+          return PersonalDataScreen(userRepository: _userRepository,);
         }
         return Container();
       }),

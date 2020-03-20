@@ -116,60 +116,101 @@ class _PersonalDataState extends State<PersonalData> {
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.5,
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: Column(
-                    children: <Widget>[
-                      TextField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          icon: Icon(
-                            Icons.person_outline,
-                            color: Colors.green,
+                  child: Theme(
+                    data: ThemeData(
+                      primaryColor: Colors.green,
+                      hintColor: Colors.grey[800],
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        TextField(
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            icon: Icon(
+                              Icons.person_outline,
+                              color: Colors.green,
+                            ),
+                            hintText: 'Ingrese su nombre',
+                            labelText: 'Nombre',
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(32.0),
+                              ),
+                            ),
+                            filled: true,
+                            hintStyle: TextStyle(color: Colors.grey[800]),
+                            fillColor: Colors.white70,
                           ),
-                          hintText: 'Ingrese su nombre',
-                          labelText: 'Nombre',
                         ),
-                      ),
-                      TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          icon: Icon(
-                            Icons.mail_outline,
-                            color: Colors.green,
+                        SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            icon: Icon(
+                              Icons.mail_outline,
+                              color: Colors.green,
+                            ),
+                            labelText: 'Correo Electronico',
+                            hintText: "example@example.ex",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(32.0),
+                              ),
+                            ),
+                            filled: true,
+                            hintStyle: TextStyle(color: Colors.grey[800]),
+                            fillColor: Colors.white70,
                           ),
-                          labelText: 'Correo Electronico',
-                          hintText: "example@example.ex",
+                          autocorrect: false,
+                          autovalidate: true,
+                          validator: (_) {
+                            return !state.isEmailValid
+                                ? 'Correo invalido'
+                                : null;
+                          },
                         ),
-                        autocorrect: false,
-                        autovalidate: true,
-                        validator: (_) {
-                          return !state.isEmailValid ? 'Correo invalido' : null;
-                        },
-                      ),
-                      TextFormField(
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                          icon: Icon(
-                            Icons.lock_outline,
-                            color: Colors.green,
+                        SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            icon: Icon(
+                              Icons.lock_outline,
+                              color: Colors.green,
+                            ),
+                            labelText: 'Contraseña',
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(32.0),
+                              ),
+                            ),
+                            filled: true,
+                            hintStyle: TextStyle(color: Colors.grey[800]),
+                            fillColor: Colors.white70,
                           ),
-                          labelText: 'Contraseña',
+                          obscureText: true,
+                          autovalidate: true,
+                          autocorrect: false,
+                          validator: (_) {
+                            return !state.isPasswordValid
+                                ? 'Invalid Password'
+                                : null;
+                          },
                         ),
-                        obscureText: true,
-                        autovalidate: true,
-                        autocorrect: false,
-                        validator: (_) {
-                          return !state.isPasswordValid
-                              ? 'Invalid Password'
-                              : null;
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.48,
+                top: MediaQuery.of(context).size.height * 0.55,
                 left: MediaQuery.of(context).size.width * 0.16,
                 right: MediaQuery.of(context).size.width * 0.16,
                 child: RaisedButton(
