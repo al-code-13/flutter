@@ -60,11 +60,15 @@ class _VerificationCodeInputState extends State<VerificationCodeInput> {
   Widget _buildInputItem(int index) {
     bool border = (widget.itemDecoration == null);
     return TextField(
+      showCursor: false,
       keyboardType: widget.keyboardType,
       maxLines: 1,
       maxLength: 2,
       focusNode: _listFocusNode[index],
       decoration: InputDecoration(
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.green, width: 2),
+          ),
           border: (border ? null : InputBorder.none),
           enabled: _currentIdex == index,
           counterText: "",

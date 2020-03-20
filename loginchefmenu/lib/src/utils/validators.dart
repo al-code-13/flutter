@@ -9,9 +9,9 @@ class Validators {
     r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$',
   );
   // Phone:
-  static final RegExp _phoneRegExp = RegExp(
-    r'(^(?:[+57]9)?[0-9]{10,12}$)',
-  );
+  // static final RegExp _phoneRegExp = RegExp(
+  //   r'(^(?:[+57]9)?[0-9]{10,12}$)',
+  // );
 
   // 3 funciones:
 
@@ -27,7 +27,7 @@ class Validators {
 
   // isValidPhone
   static isValidPhone(String phone) {
-    if (phone.length > 10) {
+    if (phone.length >= 12) {
       return true;
     } else {
       return false;

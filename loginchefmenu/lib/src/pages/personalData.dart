@@ -6,23 +6,19 @@ import 'package:loginchefmenu/src/pages/utils/createBackground.dart';
 import 'package:loginchefmenu/src/repository/user_repository.dart';
 
 class PersonalData extends StatefulWidget {
-  final UserRepository _userRepository;
   PersonalData({Key key, @required UserRepository userRepository})
       : assert(userRepository != null),
-        _userRepository = userRepository,
         super(key: key);
 
   @override
   _PersonalDataState createState() => _PersonalDataState();
 }
 
-//menuchef46@gmail.com
 class _PersonalDataState extends State<PersonalData> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   LoginBloc _loginBloc;
-  UserRepository get _userRepository => widget._userRepository;
 
   bool get isPopulated =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;

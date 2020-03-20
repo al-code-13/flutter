@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loginchefmenu/src/bloc/login_bloc/bloc.dart';
+import 'package:loginchefmenu/src/pages/utils/flutter_country_picker.dart';
+import 'package:loginchefmenu/src/pages/utils/input_formater.dart';
 import 'package:loginchefmenu/src/pages/utils/pinInput.dart';
 import 'package:loginchefmenu/src/repository/user_repository.dart';
 import 'package:loginchefmenu/src/ui/other_methods_screen.dart';
@@ -23,6 +25,9 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   LoginBloc _loginBloc;
   UserRepository get _userRepository => widget._userRepository;
   ScrollController _scrollController = ScrollController();
+  Country _countrySelected;
+  MaskTextInputFormatter maskFormater =
+      MaskTextInputFormatter(mask: '###-###-####');
   @override
   void initState() {
     super.initState();
@@ -45,11 +50,18 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   }
 
   void _onFormSubmitted() {
-    _loginBloc.add(LoginWithPhone(phoneNumber: _phoneController.text,context: context));
+    if (_countrySelected != null) {
+      final number =
+          ("+" + _countrySelected.dialingCode + _phoneController.text.replaceAll('-', ''));
+      _loginBloc.add(LoginWithPhone(phoneNumber: number, context: context));
+    } else {
+      final number = ("+57" + _phoneController.text.replaceAll('-', ''));
+      _loginBloc.add(LoginWithPhone(phoneNumber: number, context: context));
+    }
   }
 
   bool isLoginButtonEnable(LoginState state) {
-    return state.isValidPhone;
+    return state.isValidPhone && accept;
   }
 
   bool sent = false;
@@ -95,9 +107,14 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                       Positioned(
                         top: MediaQuery.of(context).size.height * 0.5,
                         left: MediaQuery.of(context).size.width * 0.08,
-                        child: Text(
-                          "Ingresar con tu celular",
-                          style: TextStyle(fontSize: 24, color: Colors.black54),
+                        child: CountryPicker(
+                          showDialingCode: true,
+                          onChanged: (Country country) {
+                            setState(() {
+                              _countrySelected = country;
+                            });
+                          },
+                          selectedCountry: _countrySelected,
                         ),
                       ),
                       Positioned(
@@ -107,6 +124,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                             height: MediaQuery.of(context).size.height * 0.5,
                             width: MediaQuery.of(context).size.width * 0.8,
                             child: TextFormField(
+                              inputFormatters: [maskFormater],
                               controller: _phoneController,
                               keyboardType:
                                   TextInputType.numberWithOptions(signed: true),
@@ -162,8 +180,11 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                         right: MediaQuery.of(context).size.width * 0.16,
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => OtherMethodsScreen(userRepository: _userRepository)));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => OtherMethodsScreen(
+                                        userRepository: _userRepository)));
                           },
                           child: Text(
                             "Ingresar con otro metodo",
@@ -222,11 +243,14 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
           Positioned(
             top: MediaQuery.of(context).size.height * 0.2,
             left: MediaQuery.of(context).size.width * 0.06,
-            child: Text(
-              "300 4896662",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
+            child: GestureDetector(
+              onTap: _onFormSubmitted,
+              child: Text(
+                "${_phoneController.text} REENVIAR",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
               ),
             ),
           ),
