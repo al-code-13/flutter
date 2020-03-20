@@ -1,27 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:loginchefmenu/src/pages/phoneNumberPage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_bloc.dart';
+import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_event.dart';
+import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_state.dart';
+import 'package:loginchefmenu/src/bloc/authentication_bloc/simple_bloc_delegate.dart';
+import 'package:loginchefmenu/src/pages/isLog.dart';
+import 'package:loginchefmenu/src/repository/user_repository.dart';
+import 'package:loginchefmenu/src/ui/login_screen.dart';
+import 'package:loginchefmenu/src/ui/personal_data_screen.dart';
+import 'package:loginchefmenu/src/ui/splash_screen.dart';
 
-import 'src/bloc/provider.dart';
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  BlocSupervisor.delegate = SimpleBlocDelegate();
+  final UserRepository userRepository = UserRepository();
+  runApp(
+    BlocProvider(
+      create: (context) =>
+          AuthenticationBloc(userRepository: userRepository)..add(AppStarted()),
+      child: App(userRepository: userRepository),
+    ),
+  );
+}
 
-import 'src/routes/routes.dart';
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
+class App extends StatelessWidget {
+  final UserRepository _userRepository;
+  const App({Key key, @required UserRepository userRepository})
+      : assert(userRepository != null),
+        _userRepository = userRepository,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "Chef Menu",
-        initialRoute: 'PhoneNumberPage',
-        routes: getRoutes(),
-        onGenerateRoute: (settings) {
-          return MaterialPageRoute(builder: (context) => PhoneNumberPage());
-        },
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+        if (state is Uninitialized) {
+          return SplassScreen();
+        } 
+         if (state is AuthenticatedWithOutEmail) {
+          return PersonalDataScreen(userRepository: _userRepository,);
+        } 
+         if (state is Authenticated) {
+          return IsLog(user:state.user);
+        } 
+        if(state is Unauthenticated){
+          return LoginScreen(userRepository: _userRepository,);
+        }
+        return Container();
+      }),
     );
   }
 }
