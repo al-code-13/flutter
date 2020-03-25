@@ -46,8 +46,8 @@ class _IsLogState extends State<IsLog> {
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.025,
-                left: MediaQuery.of(context).size.width * 0.05,
+                top: MediaQuery.of(context).size.height * 0.05,
+                left: MediaQuery.of(context).size.width * 0.04,
                 child: CircleAvatar(
                   maxRadius: 80,
                   backgroundImage: NetworkImage(
@@ -211,24 +211,27 @@ class _IsLogState extends State<IsLog> {
                       },
                       text: "   Continuar con Google   ",
                     ),
-                    RaisedButton(
-                      textColor: Colors.white,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                        child: Text("Cerrar Sesión"),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        textColor: Colors.white,
+                        child: Container(
+                          width: 250,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 80, vertical: 12),
+                          child: Text("Cerrar Sesión"),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        elevation: 0,
+                        color: Colors.deepPurple,
+                        onPressed: () {
+                          UserRepository().signOut();
+                          BlocProvider.of<AuthenticationBloc>(context)
+                              .add(LoggedOut());
+                        },
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      elevation: 0,
-                      color: Colors.deepPurple,
-                      onPressed: () {
-                        UserRepository().signOut();
-                        BlocProvider.of<AuthenticationBloc>(context)
-                            .add(LoggedOut());
-                      },
                     ),
                   ],
                 ),
