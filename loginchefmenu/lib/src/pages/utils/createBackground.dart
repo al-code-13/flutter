@@ -5,6 +5,43 @@ import 'dart:math' as math;
 
 class CreateBackground {
 //------------------Crear fondo para formulario  --------------------------------------------------------------------------
+  Widget createCircleBackground(BuildContext context) {
+    final circulo = Container(
+      width: MediaQuery.of(context).size.width * 1.2,
+      height: MediaQuery.of(context).size.width * 1.2,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[
+            Color.fromRGBO(15, 255, 76, 0.3),
+            Color.fromRGBO(15, 255, 76, 2),
+          ],
+        ),
+        shape: BoxShape.circle,
+      ),
+    );
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          left: -MediaQuery.of(context).size.width * 0.1,
+          top: -100,
+          child: circulo,
+        ),
+        Positioned(
+          top: -MediaQuery.of(context).size.height * 0.09,
+          left: -MediaQuery.of(context).size.width * 0.17,
+          child: CircleAvatar(
+            maxRadius: 168,
+            backgroundImage: NetworkImage(
+                "https://previews.123rf.com/images/seamartini/seamartini1702/seamartini170200159/70978472-cartel-de-comida-r%C3%A1pida-en-forma-redonda-con-aperitivos-vector-comida-de-hamburguesas-con-queso-y-pizz.jpg"),
+          ),
+        ),
+      ],
+    );
+  }
+
+//------------------Crear fondo para formulario  --------------------------------------------------------------------------
   Widget createMediumBackground(BuildContext context) {
     double _sigmaX = 0.0; // from 0-10
     double _sigmaY = 0.0; // from 0-10
