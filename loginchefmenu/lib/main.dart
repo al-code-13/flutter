@@ -6,8 +6,8 @@ import 'package:loginchefmenu/src/bloc/authentication_bloc/authentication_state.
 import 'package:loginchefmenu/src/bloc/authentication_bloc/simple_bloc_delegate.dart';
 import 'package:loginchefmenu/src/pages/isLog.dart';
 import 'package:loginchefmenu/src/repository/user_repository.dart';
-import 'package:loginchefmenu/src/ui/login_screen.dart';
 import 'package:loginchefmenu/src/ui/personal_data_screen.dart';
+import 'package:loginchefmenu/src/ui/login_screen.dart';
 import 'package:loginchefmenu/src/ui/splash_screen.dart';
 
 void main() {

@@ -51,8 +51,9 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
 
   void _onFormSubmitted() {
     if (_countrySelected != null) {
-      final number =
-          ("+" + _countrySelected.dialingCode + _phoneController.text.replaceAll('-', ''));
+      final number = ("+" +
+          _countrySelected.dialingCode +
+          _phoneController.text.replaceAll('-', ''));
       _loginBloc.add(LoginWithPhone(phoneNumber: number, context: context));
     } else {
       final number = ("+57" + _phoneController.text.replaceAll('-', ''));
@@ -88,10 +89,22 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
             );
         }
         if (state.isSubmitting) {
-          sent = true;
+          Scaffold.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Enviando mensaje..."),
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+            );
         }
         if (state.isSuccess) {
-          //BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+          sent = true;
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
@@ -107,41 +120,31 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                       Positioned(
                         top: MediaQuery.of(context).size.height * 0.5,
                         left: MediaQuery.of(context).size.width * 0.08,
-                        child: CountryPicker(
-                          showDialingCode: true,
-                          onChanged: (Country country) {
-                            setState(() {
-                              _countrySelected = country;
-                            });
-                          },
-                          selectedCountry: _countrySelected,
+                        child: Text(
+                          "Ingresar con tu celular",
+                          style: TextStyle(fontSize: 24, color: Colors.black54),
                         ),
                       ),
-                      Positioned(
+                      Theme(
+                        data: ThemeData(
+                            primaryColor: Colors.green,
+                            hintColor: Colors.grey[800]),
+                        child: Positioned(
                           top: MediaQuery.of(context).size.height * 0.55,
                           left: MediaQuery.of(context).size.width * 0.08,
                           child: Container(
                             height: MediaQuery.of(context).size.height * 0.5,
-                            width: MediaQuery.of(context).size.width * 0.8,
+                            width: MediaQuery.of(context).size.width * 0.85,
                             child: TextFormField(
                               inputFormatters: [maskFormater],
                               controller: _phoneController,
-                              keyboardType:
-                                  TextInputType.numberWithOptions(signed: true),
+                              keyboardType: TextInputType.number,
                               onTap: () {
                                 _scrollController.animateTo(
                                     (MediaQuery.of(context).size.height * 0.34),
                                     curve: Curves.fastOutSlowIn,
                                     duration: Duration(milliseconds: 1600));
                               },
-                              decoration: InputDecoration(
-                                icon: Icon(
-                                  Icons.phone,
-                                  color: Colors.green,
-                                ),
-                                labelText: 'Escribe tu número',
-                                hintText: "123-456-7890",
-                              ),
                               autocorrect: false,
                               autovalidate: true,
                               validator: (_) {
@@ -149,8 +152,33 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                                     ? 'Numero invalido'
                                     : null;
                               },
+                              decoration: InputDecoration(
+                                icon: CountryPicker(
+                                  showDialingCode: true,
+                                  showName: false,
+                                  onChanged: (Country country) {
+                                    setState(() {
+                                      _countrySelected = country;
+                                    });
+                                  },
+                                  selectedCountry: _countrySelected,
+                                ),
+                                labelText: 'Escribe tu número',
+                                hintText: "123-456-7890",
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.green),
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(32.0),
+                                  ),
+                                ),
+                                filled: true,
+                                hintStyle: TextStyle(color: Colors.grey[800]),
+                                fillColor: Colors.white70,
+                              ),
                             ),
-                          )),
+                          ),
+                        ),
+                      ),
                       Positioned(
                         top: MediaQuery.of(context).size.height * 0.65,
                         left: MediaQuery.of(context).size.width * 0.16,
@@ -176,7 +204,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                       ),
                       Positioned(
                         top: MediaQuery.of(context).size.height * 0.74,
-                        left: MediaQuery.of(context).size.width * 0.29,
+                        left: MediaQuery.of(context).size.width * 0.34,
                         right: MediaQuery.of(context).size.width * 0.16,
                         child: GestureDetector(
                           onTap: () {
@@ -243,20 +271,39 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
           Positioned(
             top: MediaQuery.of(context).size.height * 0.2,
             left: MediaQuery.of(context).size.width * 0.06,
-            child: GestureDetector(
-              onTap: _onFormSubmitted,
-              child: Text(
-                "${_phoneController.text} REENVIAR",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
+            child: Row(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () => setState(() {
+                    sent = false;
+                  }),
+                  child: Text(
+                    "${_phoneController.text} 🖋️",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black54,
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  width: 16,
+                ),
+                GestureDetector(
+                  onTap: _onFormSubmitted,
+                  child: Text(
+                    "REENVIAR",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.3,
-            left: MediaQuery.of(context).size.width * 0.1,
+            left: MediaQuery.of(context).size.width * 0.15,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: VerificationCodeInput(
