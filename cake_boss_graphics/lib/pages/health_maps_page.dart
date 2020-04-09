@@ -14,68 +14,72 @@ class _HealthMapPageState extends State<HealthMapPage> {
   GoogleMapController mapController;
   BitmapDescriptor _markerIcon;
   static LatLng point = LatLng(4.870337, -74.053649);
-  Set<Marker> _markers = {};
+  Set<Marker> markersV2 = Set();
   List<D1> dunos = [
     D1(
-        id: 1,
+        id: "1",
         nombre: "D1 toditos",
         ciudad: "Chía",
         departamento: "Cundinamarca",
         longitud: 4.870337,
-        latitud: -73.053649),
+        latitud: -74.053649),
     D1(
-        id: 2,
+        id: "2",
         nombre: "D1 toditos",
         ciudad: "Chía",
         departamento: "Cundinamarca",
-        longitud: 4.500337,
+        longitud: 4.872337,
+        latitud: -74.053649),
+    D1(
+        id: "3",
+        nombre: "D1 toditos",
+        ciudad: "Chía",
+        departamento: "Cundinamarca",
+        longitud: 4.872617,
         latitud: -74.053649),
   ];
 
   @override
   void initState() {
-    llenado();
     super.initState();
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 2.5), 'assets/d1.png')
+        .then((onValue) {
+      _markerIcon = onValue;
+    }).then((onValue) {
+      llenado();
+    });
   }
 
   llenado() {
+    print("si llego");
     dunos.map((f) {
-      BitmapDescriptor.fromAssetImage(
-              ImageConfiguration(devicePixelRatio: 2.5), 'assets/d1.png')
-          .then((onValue) {
-        _markerIcon = onValue;
-        _markers.add(
-          Marker(
-            markerId: MarkerId('${f.id}'),
-            position: LatLng(f.latitud, f.longitud),
-            icon: _markerIcon,
-            infoWindow: InfoWindow(title: f.ciudad, snippet: f.departamento),
-          ),
-        );
-      });
-    });
+      Marker resultMarker = Marker(
+        icon: _markerIcon,
+        markerId: MarkerId(f.id),
+        infoWindow:
+            InfoWindow(title: "${f.ciudad}", snippet: "${f.departamento}"),
+        position: LatLng(f.longitud, f.latitud),
+      );
+      markersV2.add(resultMarker);
+    }).toList();
   }
 
   static final CameraPosition _initPosition = CameraPosition(
     target: point,
     zoom: 17.4746,
   );
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       body: GoogleMap(
-        markers: _markers,
+        markers: markersV2,
         mapType: MapType.normal,
         initialCameraPosition: _initPosition,
         onMapCreated: (GoogleMapController controller) {
+          print(markersV2);
           _controller.complete(controller);
-          setState(() {
-            _markers.add(
-              Marker(
-                  markerId: MarkerId(''),
-                  position: point),
-            );
-          });
         },
       ),
     );
