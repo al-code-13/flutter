@@ -1,161 +1,175 @@
 import 'package:flutter/material.dart';
-
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class HomePage extends StatefulWidget {
-  final Widget child;
-
-  HomePage({Key key, this.child}) : super(key: key);
-
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  List<charts.Series<Pollution, String>> _seriesData;
-  List<charts.Series<Task, String>> _seriesPieData;
-  List<charts.Series<Sales, int>> _seriesLineData;
-
-  _generateData() {
-    var data1 = [
-      new Pollution(1980, 'USA', 30),
-      new Pollution(1980, 'Asia', 40),
-      new Pollution(1980, 'Europe', 10),
-    ];
-    var data2 = [
-      new Pollution(1985, 'USA', 100),
-      new Pollution(1980, 'Asia', 150),
-      new Pollution(1985, 'Europe', 80),
-    ];
-    var data3 = [
-      new Pollution(1985, 'USA', 200),
-      new Pollution(1980, 'Asia', 299),
-      new Pollution(1985, 'Europe', 180),
-    ];
-
-    var piedata = [
-      new Task('Work', 35.8, Color(0xff3366cc)),
-      new Task('Eat', 8.3, Color(0xff990099)),
-      new Task('Commute', 10.8, Color(0xff109618)),
-      new Task('TV', 15.6, Color(0xfffdbe19)),
-      new Task('Sleep', 19.2, Color(0xffff9900)),
-      new Task('Other', 10.3, Color(0xffdc3912)),
-    ];
-
-    var linesalesdata = [
-      new Sales(0, 45),
-      new Sales(1, 56),
-      new Sales(2, 55),
-      new Sales(3, 60),
-      new Sales(4, 61),
-      new Sales(5, 70),
-    ];
-    var linesalesdata1 = [
-      new Sales(0, 35),
-      new Sales(1, 46),
-      new Sales(2, 45),
-      new Sales(3, 50),
-      new Sales(4, 51),
-      new Sales(5, 60),
-    ];
-
-    var linesalesdata2 = [
-      new Sales(0, 20),
-      new Sales(1, 24),
-      new Sales(2, 25),
-      new Sales(3, 40),
-      new Sales(4, 45),
-      new Sales(5, 60),
-    ];
-
-    _seriesData.add(
-      charts.Series(
-        domainFn: (Pollution pollution, _) => pollution.place,
-        measureFn: (Pollution pollution, _) => pollution.quantity,
-        id: '2017',
-        data: data1,
-        fillPatternFn: (_, __) => charts.FillPatternType.solid,
-        fillColorFn: (Pollution pollution, _) =>
-            charts.ColorUtil.fromDartColor(Color(0xff990099)),
-      ),
-    );
-
-    _seriesData.add(
-      charts.Series(
-        domainFn: (Pollution pollution, _) => pollution.place,
-        measureFn: (Pollution pollution, _) => pollution.quantity,
-        id: '2018',
-        data: data2,
-        fillPatternFn: (_, __) => charts.FillPatternType.solid,
-        fillColorFn: (Pollution pollution, _) =>
-            charts.ColorUtil.fromDartColor(Color(0xff109618)),
-      ),
-    );
-
-    _seriesData.add(
-      charts.Series(
-        domainFn: (Pollution pollution, _) => pollution.place,
-        measureFn: (Pollution pollution, _) => pollution.quantity,
-        id: '2019',
-        data: data3,
-        fillPatternFn: (_, __) => charts.FillPatternType.solid,
-        fillColorFn: (Pollution pollution, _) =>
-            charts.ColorUtil.fromDartColor(Color(0xffff9900)),
-      ),
-    );
-
-    _seriesPieData.add(
-      charts.Series(
-        domainFn: (Task task, _) => task.task,
-        measureFn: (Task task, _) => task.taskvalue,
-        colorFn: (Task task, _) =>
-            charts.ColorUtil.fromDartColor(task.colorval),
-        id: 'Air Pollution',
-        data: piedata,
-        labelAccessorFn: (Task row, _) => '${row.taskvalue}',
-      ),
-    );
-
-    _seriesLineData.add(
-      charts.Series(
-        colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff990099)),
-        id: 'Air Pollution',
-        data: linesalesdata,
-        domainFn: (Sales sales, _) => sales.yearval,
-        measureFn: (Sales sales, _) => sales.salesval,
-      ),
-    );
-    _seriesLineData.add(
-      charts.Series(
-        colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff109618)),
-        id: 'Air Pollution',
-        data: linesalesdata1,
-        domainFn: (Sales sales, _) => sales.yearval,
-        measureFn: (Sales sales, _) => sales.salesval,
-      ),
-    );
-    _seriesLineData.add(
-      charts.Series(
-        colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xffff9900)),
-        id: 'Air Pollution',
-        data: linesalesdata2,
-        domainFn: (Sales sales, _) => sales.yearval,
-        measureFn: (Sales sales, _) => sales.salesval,
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _seriesData = List<charts.Series<Pollution, String>>();
-    _seriesPieData = List<charts.Series<Task, String>>();
-    _seriesLineData = List<charts.Series<Sales, int>>();
-    _generateData();
-  }
+class VentasPage extends StatelessWidget {
+  const VentasPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final int ventasTotales = 10542800;
+    List<Venta> ventas = [
+      Venta('Ventas telefonicas', 1500800, Colors.purple),
+      Venta('Ventas por plataformas', 3040000, Colors.blue),
+      Venta('Ventas en punto', 6002000, Colors.green),
+      Venta('Ticket promedio', 170133, Colors.orangeAccent[700]),
+    ];
+    List<charts.Series<Venta, String>> _dataCanales() {
+      return [
+        charts.Series<Venta, String>(
+          id: 'Canales',
+          data: ventas,
+          domainFn: (Venta venta, __) => venta.title,
+          measureFn: (Venta venta, __) => venta.value,
+          labelAccessorFn: (Venta venta, _) {
+            return '${((venta.value * 100) / ventasTotales).round()} %';
+          },
+          colorFn: (Venta venta, __) =>
+              charts.ColorUtil.fromDartColor(venta.color),
+        )
+      ];
+    }
+
+    var dataVentas = [
+      Ventas('Bog. cedritos', 3000, Colors.blue),
+      Ventas('Medellin', 2000, Colors.purple),
+      Ventas('Cali', 1000, Colors.green),
+      Ventas('Bog. Suba', 3000, Colors.orangeAccent[700]),
+      Ventas('Bogota', 4000, Colors.red),
+    ];
+List<charts.Series<Ventas, String>> _dataVentas() {
+      return [
+        charts.Series<Ventas, String>(
+          id: 'Ventas',
+          data: dataVentas,
+          domainFn: (Ventas venta, __) => venta.tipo,
+          measureFn: (Ventas venta, __) => venta.valor,
+          labelAccessorFn: (Ventas venta, _) {
+            return '${venta.valor} %';
+          },
+          colorFn: (Ventas venta, __) =>
+              charts.ColorUtil.fromDartColor(venta.color),
+        )
+      ];
+    }
+    var chefMenu = [
+      PuntosDeVenta('Cedritos', 24),
+      PuntosDeVenta('Chapinero', 36),
+      PuntosDeVenta('Plaza', 13),
+      PuntosDeVenta('Bogota Cedritos', 30),
+      PuntosDeVenta('Bogota Chapinero', 40),
+      PuntosDeVenta('Bogota Plaza', 10),
+      PuntosDeVenta('Bogota Kennedy', 10),
+      PuntosDeVenta('Chia', 10),
+      PuntosDeVenta('Cartagena', 10),
+      PuntosDeVenta('Bog. Centro Mayor ', 10),
+      PuntosDeVenta('Bogota Fontibon ', 10),
+      PuntosDeVenta('Bogota Suba ', 10),
+      PuntosDeVenta('Medellin ', 10),
+    ];
+    var domicilios = [
+      PuntosDeVenta('Cedritos', 67),
+      PuntosDeVenta('Chapinero', 15),
+      PuntosDeVenta('Plaza', 23),
+      PuntosDeVenta('Bogota Cedritos', 30),
+      PuntosDeVenta('Bogota Chapinero', 40),
+      PuntosDeVenta('Bogota Plaza', 10),
+      PuntosDeVenta('Bogota Kennedy', 10),
+      PuntosDeVenta('Chia', 10),
+      PuntosDeVenta('Cartagena', 10),
+      PuntosDeVenta('Bog. Centro Mayor ', 10),
+      PuntosDeVenta('Bogota Fontibon ', 10),
+      PuntosDeVenta('Bogota Suba ', 10),
+      PuntosDeVenta('Medellin ', 10),
+    ];
+    var uberEats = [
+      PuntosDeVenta('Cedritos', 55),
+      PuntosDeVenta('Chapinero', 27),
+      PuntosDeVenta('Plaza', 12),
+      PuntosDeVenta('Bogota Cedritos', 30),
+      PuntosDeVenta('Bogota Chapinero', 40),
+      PuntosDeVenta('Bogota Plaza', 10),
+      PuntosDeVenta('Bogota Kennedy', 10),
+      PuntosDeVenta('Chia', 10),
+      PuntosDeVenta('Cartagena', 10),
+      PuntosDeVenta('Bog. Centro Mayor ', 10),
+      PuntosDeVenta('Bogota Fontibon ', 10),
+      PuntosDeVenta('Bogota Suba ', 10),
+      PuntosDeVenta('Medellin ', 10),
+    ];
+    var rappi = [
+      PuntosDeVenta('Cedritos', 55),
+      PuntosDeVenta('Chapinero', 27),
+      PuntosDeVenta('Plaza', 12),
+      PuntosDeVenta('Bogota Cedritos', 30),
+      PuntosDeVenta('Bogota Chapinero', 40),
+      PuntosDeVenta('Bogota Plaza', 10),
+      PuntosDeVenta('Bogota Kennedy', 10),
+      PuntosDeVenta('Chia', 10),
+      PuntosDeVenta('Cartagena', 10),
+      PuntosDeVenta('Bog. Centro Mayor ', 10),
+      PuntosDeVenta('Bogota Fontibon ', 10),
+      PuntosDeVenta('Bogota Suba ', 10),
+      PuntosDeVenta('Medellin ', 10),
+    ];
+    List<charts.Series<PuntosDeVenta, String>> _dataPuntos() {
+      return [
+        charts.Series<PuntosDeVenta, String>(
+          id: 'Ridder',
+          domainFn: (PuntosDeVenta punto, __) => punto.nombre,
+          measureFn: (PuntosDeVenta punto, __) => punto.valor,
+          data: chefMenu,
+          colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.green),
+        ),
+        charts.Series<PuntosDeVenta, String>(
+          id: 'Domicilios',
+          domainFn: (PuntosDeVenta punto, __) => punto.nombre,
+          measureFn: (PuntosDeVenta punto, __) => punto.valor,
+          data: domicilios,
+          colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.orange),
+        ),
+        charts.Series<PuntosDeVenta, String>(
+          id: 'Restaurante',
+          domainFn: (PuntosDeVenta punto, __) => punto.nombre,
+          measureFn: (PuntosDeVenta punto, __) => punto.valor,
+          data: uberEats,
+          colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.blue),
+        ),
+      ];
+    }
+
+    List<charts.Series<PuntosDeVenta, String>> _dataPlataforma() {
+      return [
+        charts.Series<PuntosDeVenta, String>(
+          id: 'Chefmenu',
+          domainFn: (PuntosDeVenta punto, __) => punto.nombre,
+          measureFn: (PuntosDeVenta punto, __) => punto.valor,
+          data: chefMenu,
+          colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.purple),
+        ),
+        charts.Series<PuntosDeVenta, String>(
+          id: 'Domicilios',
+          domainFn: (PuntosDeVenta punto, __) => punto.nombre,
+          measureFn: (PuntosDeVenta punto, __) => punto.valor,
+          data: domicilios,
+          colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.red),
+        ),
+        charts.Series<PuntosDeVenta, String>(
+          id: 'uberEats',
+          domainFn: (PuntosDeVenta punto, __) => punto.nombre,
+          measureFn: (PuntosDeVenta punto, __) => punto.valor,
+          data: uberEats,
+          colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.green),
+        ),
+        charts.Series<PuntosDeVenta, String>(
+          id: 'Rappi',
+          domainFn: (PuntosDeVenta punto, __) => punto.nombre,
+          measureFn: (PuntosDeVenta punto, __) => punto.valor,
+          data: rappi,
+          colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.orange),
+        )
+      ];
+    }
+
     return SafeArea(
       bottom: true,
       top: false,
@@ -168,125 +182,545 @@ class _HomePageState extends State<HomePage> {
               indicatorColor: Color(0xff9962D0),
               tabs: [
                 Tab(
-                  icon: Icon(FontAwesomeIcons.burn),
+                  child: Text("Totales"),
                 ),
-                Tab(icon: Icon(FontAwesomeIcons.chartPie)),
-                Tab(icon: Icon(FontAwesomeIcons.chartLine)),
+                Tab(
+                  child: Text("Punto de venta"),
+                ),
+                Tab(
+                  child: Text("Plataforma"),
+                ),
               ],
             ),
-            title: Text('Flutter Charts'),
+            title: Text('Ventas'),
           ),
           body: TabBarView(
             children: [
-              Padding(
-                padding: EdgeInsets.all(8.0),
+              SingleChildScrollView(
                 child: Container(
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Barras',
-                          style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),
-                        ),
-                        Expanded(
-                          child: charts.BarChart(
-                            _seriesData,
-                            animate: true,
-                            barGroupingType: charts.BarGroupingType.grouped,
-                            //behaviors: [new charts.SeriesLegend()],
-                            animationDuration: Duration(seconds: 1),
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    children: <Widget>[
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text('Ventas totales',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black45)),
+                              ),
+                              Text(
+                                '\$ 10542800',
+                                style: TextStyle(fontSize: 40),
+                              )
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Canales de venta',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.45,
+                                child: charts.PieChart(
+                                  _dataCanales(),
+                                  animate: true,
+                                  behaviors: [
+                                    charts.DatumLegend(
+                                      horizontalFirst: false,
+                                      showMeasures: true,
+                                      desiredMaxColumns: 1,
+                                      outsideJustification:
+                                          charts.OutsideJustification.start,
+                                      legendDefaultMeasure: charts
+                                          .LegendDefaultMeasure.firstValue,
+                                    ),
+                                  ],
+                                  defaultRenderer: charts.ArcRendererConfig(
+                                      arcRendererDecorators: [
+                                        charts.ArcLabelDecorator(
+                                            labelPosition:
+                                                charts.ArcLabelPosition.auto),
+                                      ]),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Ventas totales',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.5,
+                                child: charts.PieChart(
+                                  _dataVentas(),
+                                  animate: true,
+                                  behaviors: [
+                                    charts.DatumLegend(
+                                      desiredMaxColumns: 1,
+                                      outsideJustification:
+                                          charts.OutsideJustification.start,
+                                    )
+                                  ],
+                                  defaultRenderer: charts.ArcRendererConfig(
+                                      arcRendererDecorators: [
+                                        charts.ArcLabelDecorator(
+                                            labelPosition:
+                                                charts.ArcLabelPosition.auto)
+                                      ]),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
+              SingleChildScrollView(
                 child: Container(
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Circular',
-                          style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),
+                  child: Column(
+                    children: <Widget>[
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Ventas por punto de venta',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height,
+                                child: charts.BarChart(
+                                  _dataPuntos(),
+                                  primaryMeasureAxis: charts.NumericAxisSpec(
+                                      tickProviderSpec:
+                                          charts.BasicNumericTickProviderSpec(
+                                              desiredMinTickCount: 5)),
+                                  vertical: false,
+                                  animate: true,
+                                  behaviors: [
+                                    charts.SeriesLegend(
+                                      outsideJustification: charts
+                                          .OutsideJustification.endDrawArea,
+                                    ),
+                                  ],
+                                  barGroupingType:
+                                      charts.BarGroupingType.grouped,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Expanded(
-                          child: charts.PieChart(_seriesPieData,
-                              animate: true,
-                              animationDuration: Duration(seconds: 1),
-                              behaviors: [
-                                new charts.DatumLegend(
-                                  outsideJustification:
-                                      charts.OutsideJustification.endDrawArea,
-                                  horizontalFirst: false,
-                                  desiredMaxRows: 2,
-                                  cellPadding: new EdgeInsets.only(
-                                      right: 4.0, bottom: 4.0),
-                                  entryTextStyle: charts.TextStyleSpec(
-                                      color: charts
-                                          .MaterialPalette.purple.shadeDefault,
-                                      fontFamily: 'Georgia',
-                                      fontSize: 11),
-                                )
+                      ),
+                      Card(
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(height: 16),
+                            Center(
+                                child: Text(
+                              'Ventas por punto de venta',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            )),
+                            SizedBox(height: 16),
+                            DataTable(
+                              columnSpacing:
+                                  MediaQuery.of(context).size.width * 0.05,
+                              columns: [
+                                DataColumn(label: Text('Sedes')),
+                                DataColumn(
+                                  label: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: AssetImage("assets/moto.png")),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Container(
+                                    width: 35,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: NetworkImage(
+                                              "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTBa3GKIXSk8rN2DlUfkSA_g-cpATEpoAdCg2jzH8p9RmoJ3_h9&usqp=CAU")),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Container(
+                                    width: 35,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: NetworkImage(
+                                              "https://as1.ftcdn.net/jpg/02/14/80/30/500_F_214803030_YXG1yaWJ12K6TdBx166hdt4XXF2PNPNm.jpg")),
+                                    ),
+                                  ),
+                                ),
                               ],
-                              defaultRenderer: new charts.ArcRendererConfig(
-                                  arcWidth: 100,
-                                  arcRendererDecorators: [
-                                    new charts.ArcLabelDecorator(
-                                        labelPosition:
-                                            charts.ArcLabelPosition.inside)
-                                  ])),
+                              rows: [
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Bogota Cedritos')),
+                                    DataCell(Text('24000')),
+                                    DataCell(Text('50000')),
+                                    DataCell(Text('70000')),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: [
+                                    DataCell(Text('Bogota Chapinero')),
+                                    DataCell(Text('910003')),
+                                    DataCell(Text('986364')),
+                                    DataCell(Text('475613')),
+                                  ],
+                                ),
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Bogota Plaza')),
+                                    DataCell(Text('500000')),
+                                    DataCell(Text('600000')),
+                                    DataCell(Text('800000')),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: [
+                                    DataCell(Text('Bogota Kennedy')),
+                                    DataCell(Text('500000')),
+                                    DataCell(Text('600000')),
+                                    DataCell(Text('800000')),
+                                  ],
+                                ),
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Chia')),
+                                    DataCell(Text('805000')),
+                                    DataCell(Text('86000')),
+                                    DataCell(Text('100000')),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: [
+                                    DataCell(Text('Cartagena')),
+                                    DataCell(Text('805000')),
+                                    DataCell(Text('86000')),
+                                    DataCell(Text('100000')),
+                                  ],
+                                ),
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Bog. Centro Mayor')),
+                                    DataCell(Text('805000')),
+                                    DataCell(Text('86000')),
+                                    DataCell(Text('100000')),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: [
+                                    DataCell(Text('Bogota Fontibon')),
+                                    DataCell(Text('805000')),
+                                    DataCell(Text('86000')),
+                                    DataCell(Text('100000')),
+                                  ],
+                                ),
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Bogota Suba')),
+                                    DataCell(Text('805000')),
+                                    DataCell(Text('86000')),
+                                    DataCell(Text('100000')),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: [
+                                    DataCell(Text('Medellin')),
+                                    DataCell(Text('805000')),
+                                    DataCell(Text('86000')),
+                                    DataCell(Text('100000')),
+                                  ],
+                                ),
+                              ],
+                            )
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
+              SingleChildScrollView(
                 child: Container(
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Lines',
-                          style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),
+                  child: Column(
+                    children: <Widget>[
+                      Card(
+                        elevation: 4,
+                        child: Container(
+                          //height: MediaQuery.of(context).size.height,
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'Ventas por plataforma',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height,
+                                child: charts.BarChart(
+                                  _dataPlataforma(),
+                                  primaryMeasureAxis: charts.NumericAxisSpec(
+                                      tickProviderSpec:
+                                          charts.BasicNumericTickProviderSpec(
+                                              desiredMinTickCount: 5)),
+                                  vertical: false,
+                                  animate: true,
+                                  behaviors: [
+                                    charts.SeriesLegend(
+                                      outsideJustification: charts
+                                          .OutsideJustification.endDrawArea,
+                                    ),
+                                  ],
+                                  barGroupingType:
+                                      charts.BarGroupingType.grouped,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                        Expanded(
-                          child: charts.LineChart(_seriesLineData,
-                              defaultRenderer: new charts.LineRendererConfig(
-                                  includeArea: true, stacked: true),
-                              animate: true,
-                              animationDuration: Duration(seconds: 1),
-                              behaviors: [
-                                new charts.ChartTitle('Years',
-                                    behaviorPosition:
-                                        charts.BehaviorPosition.bottom,
-                                    titleOutsideJustification: charts
-                                        .OutsideJustification.middleDrawArea),
-                                new charts.ChartTitle('Sales',
-                                    behaviorPosition:
-                                        charts.BehaviorPosition.start,
-                                    titleOutsideJustification: charts
-                                        .OutsideJustification.middleDrawArea),
-                                new charts.ChartTitle(
-                                  'Departments',
-                                  behaviorPosition: charts.BehaviorPosition.end,
-                                  titleOutsideJustification: charts
-                                      .OutsideJustification.middleDrawArea,
-                                )
-                              ]),
+                      ),
+                      Card(
+                        elevation: 4,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(height: 16),
+                            Center(
+                                child: Text(
+                              'Ventas por plataforma',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            )),
+                            SizedBox(height: 16),
+                            DataTable(
+                              columnSpacing:
+                                  MediaQuery.of(context).size.width * 0.02,
+                              columns: [
+                                DataColumn(label: Text('Sedes')),
+                                DataColumn(
+                                  label: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: AssetImage(
+                                              "assets/logo_chef.png")),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Container(
+                                    width: 35,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: NetworkImage(
+                                              "https://img.pystatic.com/whitelabel/domicilios/social_image.png")),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Container(
+                                    width: 35,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: NetworkImage(
+                                              "https://lh3.googleusercontent.com/9xqvAl1nJlwWlCEONxSzKr4HHdgf3brNuyuggZtR-0I1B6r7SEOTDhgeFhWIA3NBtA")),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Container(
+                                    width: 35,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: NetworkImage(
+                                              "https://static.chollometro.com/threads/thread_full_screen/default/308909_1.jpg")),
+                                    ),
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Container(
+                                    width: 35,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: NetworkImage(
+                                              "https://static.chollometro.com/threads/thread_full_screen/default/308909_1.jpg")),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              rows: [
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Bogota Cedritos')),
+                                    DataCell(Text('42')),
+                                    DataCell(Text('11')),
+                                    DataCell(Text('20')),
+                                    DataCell(Text('12')),
+                                    DataCell(Text('12')),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: [
+                                    DataCell(Text('Bogota Chapinero')),
+                                    DataCell(Text('64')),
+                                    DataCell(Text('34')),
+                                    DataCell(Text('53')),
+                                    DataCell(Text('53')),
+                                    DataCell(Text('53')),
+                                  ],
+                                ),
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Bogota Plaza')),
+                                    DataCell(Text('50')),
+                                    DataCell(Text('50')),
+                                    DataCell(Text('60')),
+                                    DataCell(Text('80')),
+                                    DataCell(Text('80')),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: [
+                                    DataCell(Text('Chia')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('80')),
+                                    DataCell(Text('10')),
+                                    DataCell(Text('10')),
+                                  ],
+                                ),
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Cartagena')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('80')),
+                                    DataCell(Text('10')),
+                                    DataCell(Text('10')),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: [
+                                    DataCell(Text('Bog. Centro Mayor')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('80')),
+                                    DataCell(Text('10')),
+                                    DataCell(Text('10')),
+                                  ],
+                                ),
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Bogota Fontibon')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('80')),
+                                    DataCell(Text('10')),
+                                    DataCell(Text('10')),
+                                  ],
+                                ),
+                                DataRow(
+                                  cells: [
+                                    DataCell(Text('Bogota Suba')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('80')),
+                                    DataCell(Text('10')),
+                                    DataCell(Text('10')),
+                                  ],
+                                ),
+                                DataRow(
+                                  selected: true,
+                                  cells: [
+                                    DataCell(Text('Bogota Suba')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('85')),
+                                    DataCell(Text('80')),
+                                    DataCell(Text('10')),
+                                    DataCell(Text('10')),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -298,25 +732,23 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class Pollution {
-  String place;
-  int year;
-  int quantity;
-
-  Pollution(this.year, this.place, this.quantity);
+class Venta {
+  final String title;
+  final int value;
+  final Color color;
+  Venta(this.title, this.value, this.color);
 }
 
-class Task {
-  String task;
-  double taskvalue;
-  Color colorval;
-
-  Task(this.task, this.taskvalue, this.colorval);
+class Ventas {
+  final String tipo;
+  final double valor;
+  final Color color;
+  Ventas(this.tipo, this.valor, this.color);
 }
 
-class Sales {
-  int yearval;
-  int salesval;
+class PuntosDeVenta {
+  final String nombre;
+  final double valor;
 
-  Sales(this.yearval, this.salesval);
+  PuntosDeVenta(this.nombre, this.valor);
 }

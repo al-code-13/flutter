@@ -170,3 +170,139 @@ class _HealthMapPageState extends State<HealthMapPage> {
     );
   }
 }
+
+
+
+--------------- nativooooo
+import 'package:flutter/material.dart';
+import 'dart:async';
+
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import '../data/d1.dart';
+
+class HealthMapPage extends StatefulWidget {
+  @override
+  _HealthMapPageState createState() => _HealthMapPageState();
+}
+
+class _HealthMapPageState extends State<HealthMapPage> {
+  Completer<GoogleMapController> _controller = Completer();
+  GoogleMapController mapController;
+  BitmapDescriptor _markerIcon;
+  static LatLng point = LatLng(4.870337, -74.053649);
+  Set<Marker> markersV2 = Set();
+  Set<Circle> circles = Set();
+
+  List<D1> dunos = [
+    D1(
+      id: "1",
+      nombre: "Tiendas D1",
+      ciudad: "Chía",
+      departamento: "Cundinamarca",
+      longitud: 4.866256,
+      latitud: -74.046032,
+    ),
+    D1(
+      id: "2",
+      nombre: "D1 Chia-Carrera-9",
+      ciudad: "Chía",
+      departamento: "Cundinamarca",
+      longitud: 4.870337,
+      latitud: -74.053749,
+    ),
+    D1(
+      id: "3",
+      nombre: "Tiendas D1 no se cual",
+      ciudad: "Chía",
+      departamento: "Cundinamarca",
+      longitud: 4.8549768,
+      latitud: -74.0566949,
+    ),
+    D1(
+      id: "4",
+      nombre: "Almacen D1",
+      ciudad: "Chía",
+      departamento: "Cundinamarca",
+      longitud: 4.8626992,
+      latitud: -74.0465318,
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    customMapPin();
+  }
+
+  void customMapPin() async {
+    _markerIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 1.0), 'assets/d1.png');
+  }
+
+  llenado() {
+    print("si llego");
+    dunos.map((f) {
+      Marker resultMarker = Marker(
+        icon: _markerIcon,
+        markerId: MarkerId(f.id),
+        infoWindow:
+            InfoWindow(title: "${f.nombre}", snippet: "${f.departamento}"),
+        position: LatLng(f.longitud, f.latitud),
+      );
+      Circle resultCircle = Circle(
+        circleId: CircleId(f.id),
+        center: LatLng(f.longitud, f.latitud),
+        radius: 300,
+        fillColor: Color.fromARGB(200, 1, 4, 05),
+        strokeColor: Colors.transparent,
+        consumeTapEvents: true,
+        visible: true,
+      );
+
+      circles.add(resultCircle);
+      markersV2.add(resultMarker);
+    }).toList();
+  }
+
+  static final CameraPosition _initPosition = CameraPosition(
+    target: point,
+    zoom: 15.4746,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: SafeArea(
+       // bottom: false,
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height * 0.965,
+                width: double.infinity,
+                child: WebView(
+                  initialUrl: "http://mapcakeboss.webcindario.com/",
+                  javascriptMode: JavascriptMode.unrestricted,
+                ),
+              ),
+              //Text("data"),
+            ],
+          ),
+        ),
+      ),
+      // body: GoogleMap(
+      //   markers: markersV2,
+      //   circles: circles,
+      //   mapType: MapType.normal,
+      //   initialCameraPosition: _initPosition,
+      //   onMapCreated: (GoogleMapController controller) {
+      //     setState(() {
+      //       llenado();
+      //     });
+      //     _controller.complete(controller);
+      //   },
+      // ),
+    );
+  }
+}

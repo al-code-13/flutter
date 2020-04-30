@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Heatmaps</title>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+      #floating-panel {
+        background-color: #fff;
+        border: 1px solid #999;
+        left: 25%;
+        padding: 5px;
+        position: absolute;
+        top: 10px;
+        z-index: 5;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <script>
+      var map, heatmap;
+      var uluru = {lat: 4.866256, lng: -74.04603};
+      var uluru2 = {lat: 4.870337, lng: -74.053749};
+      var uluru3 = {lat: 4.8549768, lng: -74.0566949};
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: {lat: 4.868751, lng: -74.0554179},
+          mapTypeId: 'roadmap'
+        });
+
+        heatmap = new google.maps.visualization.HeatmapLayer({
+          data: getPoints(),
+          map: map
+        });
+        var marker = new google.maps.Marker({position: uluru, map: map});
+        var marker = new google.maps.Marker({position: uluru2, map: map});
+        var marker = new google.maps.Marker({position: uluru3, map: map});
+
+      }
+
+      
+
+      function changeGradient() {
+        var gradient = [
+          'rgba(0, 255, 255, 0)',
+          'rgba(0, 255, 255, 1)',
+          'rgba(0, 191, 255, 1)',
+          'rgba(0, 127, 255, 1)',
+          'rgba(0, 63, 255, 1)',
+          'rgba(0, 0, 255, 1)',
+          'rgba(0, 0, 223, 1)',
+          'rgba(0, 0, 191, 1)',
+          'rgba(0, 0, 159, 1)',
+          'rgba(0, 0, 127, 1)',
+          'rgba(63, 0, 91, 1)',
+          'rgba(127, 0, 63, 1)',
+          'rgba(191, 0, 31, 1)',
+          'rgba(255, 0, 0, 1)'
+        ]
+        heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+      }
+
+      function changeRadius() {
+        heatmap.set('radius', heatmap.get('radius') ? null : 20);
+      }
+
+      function changeOpacity() {
+        heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+      }
+
+      // Heatmap data: 500 Points
+      function getPoints() {
+        return [
+          new google.maps.LatLng(4.868751, -74.0554179),
+          new google.maps.LatLng(4.8690555,-74.0537811),
+          new google.maps.LatLng(4.868251, -74.0555179),
+          new google.maps.LatLng(4.868351, -74.0556179),
+          new google.maps.LatLng(4.868451, -74.0557179),
+          new google.maps.LatLng(4.868851, -74.0553179),
+          new google.maps.LatLng(4.868651, -74.0552179),
+          new google.maps.LatLng(4.868551, -74.0551179),
+          new google.maps.LatLng(4.870337, -74.0551189),
+          new google.maps.LatLng(4.870337, -74.0551179),
+          new google.maps.LatLng(4.870347, -74.0551199),
+          new google.maps.LatLng(4.870367, -74.0551169),
+          new google.maps.LatLng(4.870367, -74.0551139),
+          new google.maps.LatLng(4.870397, -74.0551119),
+          new google.maps.LatLng(4.870307, -74.0551129),
+          new google.maps.LatLng(4.8626992, -74.0465318),
+          new google.maps.LatLng(4.8626982, -74.0465328),
+          new google.maps.LatLng(4.8626092, -74.0465338),
+          new google.maps.LatLng(4.8626792, -74.0465378),
+          new google.maps.LatLng(4.8626692, -74.0465348),
+          new google.maps.LatLng(4.8626892, -74.0465358),
+          new google.maps.LatLng(4.8626992, -74.0465368),
+
+        ];
+      }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxjPtKTUmaHtrQIWBaaVHooHyqtYiH9Vo&libraries=visualization&callback=initMap">
+    </script>
+  </body>
+</html>
