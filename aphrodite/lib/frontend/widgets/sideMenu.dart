@@ -1,3 +1,5 @@
+import 'package:aphrodite/frontend/src/pages/home_page.dart';
+import 'package:aphrodite/frontend/src/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 
 import '../src/pages/events.dart';
@@ -23,18 +25,20 @@ class MenuSide extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.home),
             title: Text('Inicio'),
-            onTap: () => {},
+            onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()))},
+            
           ),
           ListTile(
             leading: Icon(Icons.person),
             title: Text('Perfil'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage()))},
+
           ),
           ListTile(
             leading: Icon(Icons.view_list),
             title: Text('Convocatorias'),
             onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context)=>EventsPage()))},
-
+            
             
           ),
           ListTile(
