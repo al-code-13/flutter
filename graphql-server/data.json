@@ -1,0 +1,36 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "title": "node course",
+      "author": "Michel Bachelett",
+      "topic": "Js",
+      "url": "http://fazweb.com",
+      "description":"ESTA ES LA PUTA DESCRIPCION"
+    },
+    {
+      "id": 2,
+      "title": "Js course",
+      "author": "KIA Bachelett",
+      "topic": "Js",
+      "url": "http://fazweb.com",
+      "description":"ESTA ES LA PUTA DESCRIPCION"
+    },
+    {
+      "id": 3,
+      "title": "Py course",
+      "author": "Devid Bachelett",
+      "topic": "Js",
+      "url": "http://fazweb.com",
+      "description":"ESTA ES LA PUTA DESCRIPCION"
+    },
+    {
+      "id": 4,
+      "title": "KL course",
+      "author": "Jhon Bachelett",
+      "topic": "Js",
+      "url": "http://fazweb.com",
+      "description":"ESTA ES LA PUTA DESCRIPCION"
+    }
+  ]
+}
