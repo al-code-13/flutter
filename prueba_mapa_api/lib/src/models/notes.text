@@ -1,8 +1,11 @@
+### VERSION ESTABLE SERVICIOS GOOGLE ###
+
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:prueba_mapa_api/src/models/GetLocation/locationResponse.dart';
-import 'src/locationLogic/location_logic.dart';
-import 'src/models/Road&type/Road_City.dart';
+import 'package:prueba_mapa_api/src/models/locationResponse.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 
 void main() {
   runApp(MyApp());
@@ -23,15 +26,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-TypeRoad selectedRoad;
-final Set<Marker> _markers = Set();
-
-final TextEditingController mainController = TextEditingController();
-final TextEditingController secondaryController = TextEditingController();
-final TextEditingController plaqueController = TextEditingController();
-final TextEditingController complementController = TextEditingController();
-final TextEditingController aliasController = TextEditingController();
-
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
@@ -41,13 +35,24 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-LatLng newPosition;
-
 class _MyHomePageState extends State<MyHomePage> {
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(4.627154781402947, -74.17772915214299),
     zoom: 18,
   );
+  GoogleMapController mapController;
+  CameraPosition positioned;
+
+  final List<FocusNode> focus = List.generate(5, (i) => FocusNode());
+  final TextEditingController _mainController = TextEditingController();
+  final TextEditingController _secondaryController = TextEditingController();
+  final TextEditingController _plaqueController = TextEditingController();
+  final TextEditingController _complementController = TextEditingController();
+  final TextEditingController _aliasController = TextEditingController();
+  List<Result> rta;
+
+  LocationResponse locationResponse;
+
   List<City> citys = <City>[
     City('BOGOTA'),
     City('MEDALLO'),
@@ -56,18 +61,12 @@ class _MyHomePageState extends State<MyHomePage> {
   List<TypeRoad> typeRoad = <TypeRoad>[
     TypeRoad('Calle'),
     TypeRoad('Carrera'),
-    TypeRoad('Transversal'),
-    TypeRoad('Diagonal'),
-    TypeRoad('Null')
+    TypeRoad('Transversal')
   ];
-  CameraPosition positioned;
-  LocationLogic logic = LocationLogic();
-
-  final List<FocusNode> focus = List.generate(5, (i) => FocusNode());
-
-  LocationResponse rta;
 
   City selectedUser;
+  TypeRoad selectedRoad;
+  final Set<Marker> _markers = Set();
 
   @override
   Widget build(BuildContext context) {
@@ -92,20 +91,26 @@ class _MyHomePageState extends State<MyHomePage> {
             child: GoogleMap(
               mapType: MapType.normal,
               initialCameraPosition: _kGooglePlex,
-              onMapCreated: logic.setMapController,
+              onMapCreated: (controller) {
+                mapController = controller;
+              },
               markers: _markers,
               myLocationEnabled: true,
               myLocationButtonEnabled: true,
               onCameraIdle: () async {
                 if (positioned != null) {
-                  rta = await logic.getAddress(positioned);
-                  if (rta != null) {
-                    validations(rta);
-                  }
+                  rta = await _getAddress(positioned);
+                  print("Ya no lo hago o si?");
+                  _validations(rta[0]);
                 }
               },
               onCameraMove: ((_position) {
-                updatePosition(_position);
+                Future.delayed(const Duration(milliseconds: 1), () {
+                  _updatePosition(_position);
+
+                  setState(() {});
+                });
+
                 setState(() {
                   positioned = _position;
                 });
@@ -171,9 +176,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         value: selectedRoad,
                         onChanged: (TypeRoad value) {
-                          validateAddress();
-                          selectedRoad = value;
-                          setState(() {});
+                          setState(() {
+                            selectedRoad = value;
+                          });
                         },
                         hint: Text("Selecciona"),
                         items: typeRoad.map((TypeRoad typeRoad) {
@@ -194,17 +199,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     SizedBox(width: 4),
                     Expanded(
                       child: TextField(
-                        controller: mainController,
+                        controller: _mainController,
                         style: TextStyle(fontSize: 16.0),
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                           isDense: true,
                           labelText: "Numero",
                         ),
-                        onChanged: (_) {
-                          validateAddress();
-                          setState(() {});
-                        },
                         textInputAction: TextInputAction.next,
                         focusNode: focus[0],
                         onSubmitted: (v) =>
@@ -226,17 +227,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     Expanded(
                       child: TextField(
-                        controller: secondaryController,
+                        controller: _secondaryController,
                         style: TextStyle(fontSize: 16.0),
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                           isDense: true,
                           labelText: "Numero",
                         ),
-                        onChanged: (_) {
-                          validateAddress();
-                          setState(() {});
-                        },
                         textInputAction: TextInputAction.next,
                         focusNode: focus[1],
                         onSubmitted: (v) =>
@@ -258,17 +255,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     Expanded(
                       child: TextField(
-                        controller: plaqueController,
+                        controller: _plaqueController,
                         style: TextStyle(fontSize: 16.0),
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                           isDense: true,
                           labelText: "Placa",
                         ),
-                        onChanged: (_) {
-                          validateAddress();
-                          setState(() {});
-                        },
                         textInputAction: TextInputAction.next,
                         focusNode: focus[2],
                         onSubmitted: (v) =>
@@ -278,7 +271,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 TextField(
-                  controller: complementController,
+                  controller: _complementController,
                   style: TextStyle(fontSize: 16.0),
                   keyboardType: TextInputType.text,
                   maxLines: 1,
@@ -303,7 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     SizedBox(width: 8),
                     Expanded(
                       child: TextField(
-                        controller: aliasController,
+                        controller: _aliasController,
                         style: TextStyle(fontSize: 16.0),
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
@@ -320,19 +313,20 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           RaisedButton(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
-              color: Colors.orangeAccent,
-              child: Text(
-                "Agregar Actualizar",
-                style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
-              onPressed: () => print("object")),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+            color: Colors.orangeAccent,
+            child: Text(
+              "Agregar Actualizar",
+              style: TextStyle(color: Colors.white, fontSize: 24),
+            ),
+            onPressed: () => print("Actualizdo"),
+          ),
         ],
       ),
     );
   }
 
-  updatePosition(CameraPosition _position) {
+  void _updatePosition(CameraPosition _position) {
     Marker marker = _markers.firstWhere(
         (p) => p.markerId == MarkerId('marker_1'),
         orElse: () => null);
@@ -346,61 +340,258 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  validateAddress() {
-    String city;
-    String typeRoad;
-    String mainRoad;
-    String secondaryRoad;
-    String plaque;
-    print("SI VINE LOKA");
-    if (mainController.text != "" &&
-        secondaryController.text != "" &&
-        selectedRoad.type != null &&
-        plaqueController.text != "") {
-      print(mainController.text);
-      city = "Bogota";
-      typeRoad = selectedRoad.type;
-      mainRoad = mainController.text;
-      secondaryRoad = secondaryController.text;
-      plaque = plaqueController.text;
-
-      logic.getLocation(city, typeRoad, mainRoad, secondaryRoad, plaque);
+  void _validations(Result rta) {
+    if (rta.addressComponents[0].types[0] == "street_number") {
+      String longAdress = rta.addressComponents[0].shortName;
+      List seconRoad = longAdress.split("-");
+      _secondaryController.text = seconRoad[0];
+      _plaqueController.text = seconRoad[1];
     }
-  }
+    if (rta.addressComponents[1].types[0] == "route") {
+      String longAdressMain = rta.addressComponents[1].shortName;
+      List main = longAdressMain.split(".");
+      switch (main[0].toString()) {
+        case "Cl":
+          setState(() {
+            selectedRoad = typeRoad[0];
+          });
 
-  validations(LocationResponse rta) {
-    if (rta.mainRoad != null &&
-        rta.secondaryRoad != null &&
-        rta.plaque != null) {
-      mainController.text = rta.mainRoad;
-      secondaryController.text = rta.secondaryRoad;
-      plaqueController.text = rta.plaque;
-    } else {
-      mainController.text = "null";
-      secondaryController.text = "null";
-      plaqueController.text = "null";
-    }
+          break;
+        case "Cra":
+          setState(() {
+            selectedRoad = typeRoad[1];
+          });
 
-    switch (rta.typeRoad) {
-      case "Calle":
-        selectedRoad = typeRoad[0];
+          break;
+        case "Dg":
+          setState(() {
+            selectedRoad = typeRoad[2];
+          });
 
-        break;
-      case "Carrera":
-        selectedRoad = typeRoad[1];
-
-        break;
-
-      case "Transversal":
-        selectedRoad = typeRoad[2];
-
-        break;
-      case "Diagonal":
-        selectedRoad = typeRoad[3];
-
-        break;
-      default:
-        selectedRoad = typeRoad[4];
+          break;
+        default:
+          selectedRoad = typeRoad[2];
+      }
+      _mainController.text = main[1];
     }
   }
 }
+
+Future<List<Result>> _getAddress(CameraPosition position) async {
+  var key = "AIzaSyAxjPtKTUmaHtrQIWBaaVHooHyqtYiH9Vo";
+  var url =
+      "https://maps.googleapis.com/maps/api/geocode/json?language=es-419&latlng=${position.target.latitude},${position.target.longitude}&key=$key";
+
+  var response = await http.post(url);
+  var rtaParseada =
+      LocationResponse.fromJson(convert.json.decode(response.body));
+  return rtaParseada.results;
+}
+
+class City {
+  City(this.name);
+  final String name;
+}
+
+class TypeRoad {
+  final String type;
+  TypeRoad(this.type);
+}
+
+
+
+---------------------------------------------------------------------------------------------------------------------
+// To parse this JSON data, do
+//
+//     final locationResponse = locationResponseFromJson(jsonString);
+
+import 'dart:convert';
+
+LocationResponse locationResponseFromJson(String str) =>
+    LocationResponse.fromJson(json.decode(str));
+
+String locationResponseToJson(LocationResponse data) =>
+    json.encode(data.toJson());
+
+class LocationResponse {
+  LocationResponse({
+    this.plusCode,
+    this.results,
+    this.status,
+  });
+
+  PlusCode plusCode;
+  List<Result> results;
+  String status;
+
+  factory LocationResponse.fromJson(Map<String, dynamic> json) =>
+      LocationResponse(
+        plusCode: PlusCode.fromJson(json["plus_code"]),
+        results:
+            List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "plus_code": plusCode.toJson(),
+        "results": List<dynamic>.from(results.map((x) => x.toJson())),
+        "status": status,
+      };
+}
+
+class PlusCode {
+  PlusCode({
+    this.compoundCode,
+    this.globalCode,
+  });
+
+  String compoundCode;
+  String globalCode;
+
+  factory PlusCode.fromJson(Map<String, dynamic> json) => PlusCode(
+        compoundCode: json["compound_code"],
+        globalCode: json["global_code"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "compound_code": compoundCode,
+        "global_code": globalCode,
+      };
+}
+
+class Result {
+  Result({
+    this.addressComponents,
+    this.formattedAddress,
+    this.geometry,
+    this.placeId,
+    this.plusCode,
+    this.types,
+  });
+
+  List<AddressComponent> addressComponents;
+  String formattedAddress;
+  Geometry geometry;
+  String placeId;
+  PlusCode plusCode;
+  List<String> types;
+
+  factory Result.fromJson(Map<String, dynamic> json) => Result(
+        addressComponents: List<AddressComponent>.from(
+            json["address_components"]
+                .map((x) => AddressComponent.fromJson(x))),
+        formattedAddress: json["formatted_address"],
+        geometry: Geometry.fromJson(json["geometry"]),
+        placeId: json["place_id"],
+        plusCode: json["plus_code"] == null
+            ? null
+            : PlusCode.fromJson(json["plus_code"]),
+        types: List<String>.from(json["types"].map((x) => x)),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "address_components":
+            List<dynamic>.from(addressComponents.map((x) => x.toJson())),
+        "formatted_address": formattedAddress,
+        "geometry": geometry.toJson(),
+        "place_id": placeId,
+        "plus_code": plusCode == null ? null : plusCode.toJson(),
+        "types": List<dynamic>.from(types.map((x) => x)),
+      };
+}
+
+class AddressComponent {
+  AddressComponent({
+    this.longName,
+    this.shortName,
+    this.types,
+  });
+
+  String longName;
+  String shortName;
+  List<String> types;
+
+  factory AddressComponent.fromJson(Map<String, dynamic> json) =>
+      AddressComponent(
+        longName: json["long_name"],
+        shortName: json["short_name"],
+        types: List<String>.from(json["types"].map((x) => x)),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "long_name": longName,
+        "short_name": shortName,
+        "types": List<dynamic>.from(types.map((x) => x)),
+      };
+}
+
+class Geometry {
+  Geometry({
+    this.location,
+    this.locationType,
+    this.viewport,
+    this.bounds,
+  });
+
+  Location location;
+  String locationType;
+  Viewport viewport;
+  Viewport bounds;
+
+  factory Geometry.fromJson(Map<String, dynamic> json) => Geometry(
+        location: Location.fromJson(json["location"]),
+        locationType: json["location_type"],
+        viewport: Viewport.fromJson(json["viewport"]),
+        bounds:
+            json["bounds"] == null ? null : Viewport.fromJson(json["bounds"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "location": location.toJson(),
+        "location_type": locationType,
+        "viewport": viewport.toJson(),
+        "bounds": bounds == null ? null : bounds.toJson(),
+      };
+}
+
+class Viewport {
+  Viewport({
+    this.northeast,
+    this.southwest,
+  });
+
+  Location northeast;
+  Location southwest;
+
+  factory Viewport.fromJson(Map<String, dynamic> json) => Viewport(
+        northeast: Location.fromJson(json["northeast"]),
+        southwest: Location.fromJson(json["southwest"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "northeast": northeast.toJson(),
+        "southwest": southwest.toJson(),
+      };
+}
+
+class Location {
+  Location({
+    this.lat,
+    this.lng,
+  });
+
+  double lat;
+  double lng;
+
+  factory Location.fromJson(Map<String, dynamic> json) => Location(
+        lat: json["lat"].toDouble(),
+        lng: json["lng"].toDouble(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "lat": lat,
+        "lng": lng,
+      };
+}
+
+
