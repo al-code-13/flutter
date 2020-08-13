@@ -42,7 +42,7 @@ final LocalAuthentication auth = LocalAuthentication();
   double _sigmaY = 0.0; // from 0-10
   double _opacity = 0.5; // from 0-1.0
 
-  UserRepository get _userRepository => widget._userRepository;
+  UserRepository get userRepository => widget._userRepository;
   bool get isPopulated =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
   bool isLoginButtonEnable(LoginState state) {

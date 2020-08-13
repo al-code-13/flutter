@@ -36,6 +36,7 @@ dependencies:
   cached_network_image: ^2.1.0+1
   local_auth: ^0.6.2+1
   flare_flutter: ^2.0.3
+  curved_navigation_bar: ^0.3.2
   
 dev_dependencies:
   flutter_test:
