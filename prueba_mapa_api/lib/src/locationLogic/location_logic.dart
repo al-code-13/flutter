@@ -6,17 +6,20 @@ import 'package:prueba_mapa_api/src/models/GetLocation/locationRequest.dart';
 import 'dart:convert' as convert;
 import 'package:prueba_mapa_api/src/models/GetLocation/locationResponse.dart';
 
-GoogleMapController _controller;
-LatLng newPosition;
-
 class LocationLogic {
-  Future<AddresResponse> getLocation(
-    String city,
-    String typeRoad,
-    String mainRoad,
-    String secondaryRoad,
-    String plaque,
-  ) async {
+  GoogleMapController _controller;
+  LatLng newPosition;
+
+  void setNewPositions(LatLng loquellega) {
+    newPosition = loquellega;
+    if (newPosition != null) {
+      print(newPosition);
+      _controller.moveCamera(CameraUpdate.newLatLngZoom(newPosition, 15));
+    }
+  }
+
+  Future<AddresResponse> getLocation(String city, String typeRoad,
+      String mainRoad, String secondaryRoad, String plaque) async {
     var url = "https://shielded-atoll-43694.herokuapp.com/searchAddress";
     AddresRequest values = AddresRequest(
         city: city,
