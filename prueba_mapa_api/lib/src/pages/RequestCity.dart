@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:prueba_mapa_api/src/bloc/blocCitys/blocExport.dart';
-import 'package:prueba_mapa_api/src/locationLogic/location_logic.dart';
 import 'package:prueba_mapa_api/src/models/GetCitys/Citys_Response.dart';
 import 'package:prueba_mapa_api/src/models/GetLocation/locationResponse.dart';
 import 'package:prueba_mapa_api/src/models/Road&type/Road_City.dart';
@@ -36,12 +35,13 @@ class _RequesCityPageState extends State<RequesCityPage> {
     TypeRoad('Null')
   ];
   CameraPosition positioned;
-  LocationLogic logic = LocationLogic();
+
   final List<FocusNode> focus = List.generate(5, (i) => FocusNode());
   LocationResponse rta;
   SelectedCity selectionUserCity;
+  SelectedSUBCity selectedSUBCity;
 
-  bool isRural = false;
+  bool isRural = true;
 
   @override
   Widget build(BuildContext context) {
@@ -55,72 +55,205 @@ class _RequesCityPageState extends State<RequesCityPage> {
     );
 
     return BlocListener<CitysBloc, CitysState>(
-      listener: (BuildContext context, state) {},
-      child: BlocBuilder<CitysBloc, CitysState>(builder: (context, state) {
-        if (state is InitialState) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (state is LoadedCitysState) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                child: GoogleMap(
-                  mapType: MapType.normal,
-                  initialCameraPosition: _kGooglePlex,
-                  onMapCreated: logic.setMapController,
-                  markers: _markers,
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: true,
-                  onCameraIdle: () async {
-                    if (positioned != null) {
-                      rta = await logic.getAddress(positioned);
-                      if (rta != null) {
-                        validations(rta);
-                      }
-                    }
-                  },
-                  onCameraMove: ((_position) {
-                    updatePosition(_position);
-                    setState(() {
-                      positioned = _position;
-                    });
-                  }),
+      listener: (BuildContext context, state) {
+        if (state is UpdateMoveCameraState) {
+          if (state.locationResponse != null) {
+            print("Vine a validar");
+            validations(state.locationResponse);
+          }
+        }
+      },
+      child: BlocBuilder<CitysBloc, CitysState>(
+        buildWhen: (_, state) {
+          return (state is! UpdateMoveCameraState &&
+              state is! UpdateMap &&
+              state is! GetLocationState);
+        },
+        builder: (context, state) {
+          if (state is InitialState) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is UserSelectedCityState) {
+            return Column(children: [
+              Center(
+                child: Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<SelectedCity>(
+                      iconEnabledColor: Colors.black,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16.0,
+                      ),
+                      value: selectionUserCity,
+                      hint: Text("Selecciona"),
+                      // SOLO UNA CIUDAD
+                      onChanged: (SelectedCity value) {
+                        BlocProvider.of<CitysBloc>(context)
+                            .add(ActionUserSelect2DrEvent(value.i));
+                        validateRural(state.cityResponse, value.i);
+                        selectionUserCity = value;
+                        setState(() {});
+                      },
+                      items: state.listdep.map((i) {
+                        return DropdownMenuItem(
+                          value: i,
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                i.nameCity,
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
               ),
-              Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
+              state.isSecondDRenable
+                  ? Center(
+                      child: Expanded(
                           child: DropdownButtonHideUnderline(
-                            child: DropdownButton<SelectedCity>(
+                        child: DropdownButton<SelectedSUBCity>(
+                          iconEnabledColor: Colors.black,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16.0,
+                          ),
+                          value: selectedSUBCity,
+                          hint: Text("Selecciona"),
+                          // SELECCIONAR LA OTRA CIUDAD
+                          onChanged: (SelectedSUBCity value) {
+                            print(value.i);
+                            BlocProvider.of<CitysBloc>(context).add(
+                                MoveToCityEvent(
+                                    valueDep: selectionUserCity.i,
+                                    valueCiu: value.i));
+                            selectedSUBCity = value;
+                            setState(() {});
+                          },
+                          items: state.listdep2.map((i) {
+                            return DropdownMenuItem(
+                              value: i,
+                              child: Row(
+                                children: <Widget>[
+                                  Text(
+                                    i.nameCity,
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      )),
+                    )
+                  : SizedBox()
+            ]);
+          } else if (state is LoadedCitysState) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: GoogleMap(
+                    mapType: MapType.normal,
+                    initialCameraPosition: _kGooglePlex,
+                    onMapCreated: state.setMapController,
+                    markers: _markers,
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
+                    onCameraIdle: () async {
+                      if (positioned != null) {
+                        BlocProvider.of<CitysBloc>(context)
+                            .add(GetAddressLocationEvent(position: positioned));
+                      }
+                    },
+                    onCameraMove: ((_position) {
+                      updatePosition(_position);
+                      setState(() {
+                        positioned = _position;
+                      });
+                    }),
+                  ),
+                ),
+                Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<SelectedCity>(
+                                iconEnabledColor: Colors.black,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16.0,
+                                ),
+                                value: selectionUserCity,
+                                hint: Text("Selecciona"),
+                                onChanged: (SelectedCity value) {
+                                  BlocProvider.of<CitysBloc>(context).add(
+                                      MoveToCityEvent(
+                                          valueDep: state.idSelected,
+                                          valueCiu: value.i));
+                                  selectionUserCity = value;
+                                  setState(() {});
+                                },
+                                items: state.listdep.map((i) {
+                                  return DropdownMenuItem(
+                                    value: i,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          i.nameCity,
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: Icon(Icons.ac_unit),
+                            iconSize: 32,
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                      isRural ? Text("URBANO") : Text("Rural"),
+                      Row(
+                        children: [
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton<TypeRoad>(
                               iconEnabledColor: Colors.black,
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16.0,
                               ),
-                              value: selectionUserCity,
-                              hint: Text("Selecciona"),
-                              onChanged: (SelectedCity value) {
-                                BlocProvider.of<CitysBloc>(context)
-                                    .add(MoveToCityEvent(value.i));
-                                selectionUserCity = value;
+                              value: selectedRoad,
+                              onChanged: (TypeRoad value) {
+                                validateAddress();
+                                selectedRoad = value;
                                 setState(() {});
                               },
-                              items: state.listdep.map((i) {
-                                return DropdownMenuItem(
-                                  value: i,
+                              hint: Text("Selecciona"),
+                              items: typeRoad.map((TypeRoad typeRoad) {
+                                return DropdownMenuItem<TypeRoad>(
+                                  value: typeRoad,
                                   child: Row(
                                     children: <Widget>[
                                       Text(
-                                        i.nameCity,
+                                        typeRoad.type,
                                         style: TextStyle(color: Colors.black),
                                       ),
                                     ],
@@ -129,193 +262,171 @@ class _RequesCityPageState extends State<RequesCityPage> {
                               }).toList(),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: Icon(Icons.ac_unit),
-                          iconSize: 32,
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                    isRural ? Text("URBANO") : Text("Rural"),
-                    Row(
-                      children: [
-                        DropdownButtonHideUnderline(
-                          child: DropdownButton<TypeRoad>(
-                            iconEnabledColor: Colors.black,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
+                          SizedBox(width: 4),
+                          Expanded(
+                            child: TextField(
+                              controller: mainController,
+                              style: TextStyle(fontSize: 16.0),
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                labelText: "Numero",
+                              ),
+                              onChanged: (_) {
+                                validateAddress();
+                                setState(() {});
+                              },
+                              textInputAction: TextInputAction.next,
+                              focusNode: focus[0],
+                              onSubmitted: (v) =>
+                                  FocusScope.of(context).requestFocus(focus[1]),
                             ),
-                            value: selectedRoad,
-                            onChanged: (TypeRoad value) {
-                              validateAddress();
-                              selectedRoad = value;
-                              setState(() {});
-                            },
-                            hint: Text("Selecciona"),
-                            items: typeRoad.map((TypeRoad typeRoad) {
-                              return DropdownMenuItem<TypeRoad>(
-                                value: typeRoad,
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      typeRoad.type,
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ],
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 4.0, right: 4.0),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Text(
+                                '#',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w900,
                                 ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        Expanded(
-                          child: TextField(
-                            controller: mainController,
-                            style: TextStyle(fontSize: 16.0),
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              labelText: "Numero",
-                            ),
-                            onChanged: (_) {
-                              validateAddress();
-                              setState(() {});
-                            },
-                            textInputAction: TextInputAction.next,
-                            focusNode: focus[0],
-                            onSubmitted: (v) =>
-                                FocusScope.of(context).requestFocus(focus[1]),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Text(
-                              '#',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w900,
                               ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: secondaryController,
-                            style: TextStyle(fontSize: 16.0),
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              labelText: "Numero",
+                          Expanded(
+                            child: TextField(
+                              controller: secondaryController,
+                              style: TextStyle(fontSize: 16.0),
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                labelText: "Numero",
+                              ),
+                              onChanged: (_) {
+                                validateAddress();
+                                setState(() {});
+                              },
+                              textInputAction: TextInputAction.next,
+                              focusNode: focus[1],
+                              onSubmitted: (v) =>
+                                  FocusScope.of(context).requestFocus(focus[2]),
                             ),
-                            onChanged: (_) {
-                              validateAddress();
-                              setState(() {});
-                            },
-                            textInputAction: TextInputAction.next,
-                            focusNode: focus[1],
-                            onSubmitted: (v) =>
-                                FocusScope.of(context).requestFocus(focus[2]),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Text(
-                              '-',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w900,
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 4.0, right: 4.0),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Text(
+                                '-',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w900,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: plaqueController,
-                            style: TextStyle(fontSize: 16.0),
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              labelText: "Placa",
+                          Expanded(
+                            child: TextField(
+                              controller: plaqueController,
+                              style: TextStyle(fontSize: 16.0),
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                labelText: "Placa",
+                              ),
+                              onChanged: (_) {
+                                validateAddress();
+                                setState(() {});
+                              },
+                              textInputAction: TextInputAction.next,
+                              focusNode: focus[2],
+                              onSubmitted: (v) =>
+                                  FocusScope.of(context).requestFocus(focus[3]),
                             ),
-                            onChanged: (_) {
-                              validateAddress();
-                              setState(() {});
-                            },
-                            textInputAction: TextInputAction.next,
-                            focusNode: focus[2],
-                            onSubmitted: (v) =>
-                                FocusScope.of(context).requestFocus(focus[3]),
                           ),
-                        ),
-                      ],
-                    ),
-                    TextField(
-                      controller: complementController,
-                      style: TextStyle(fontSize: 16.0),
-                      keyboardType: TextInputType.text,
-                      maxLines: 1,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        labelText: "Edificio, Casa, Apartamento, Bloque...",
+                        ],
                       ),
-                      textInputAction: TextInputAction.next,
-                      focusNode: focus[3],
-                      onSubmitted: (v) =>
-                          FocusScope.of(context).requestFocus(focus[4]),
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: Icon(Icons.home, color: Colors.black),
-                          iconSize: 40,
-                          onPressed: () => print("ME TOCARON"),
+                      TextField(
+                        controller: complementController,
+                        style: TextStyle(fontSize: 16.0),
+                        keyboardType: TextInputType.text,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelText: "Edificio, Casa, Apartamento, Bloque...",
                         ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: aliasController,
-                            style: TextStyle(fontSize: 16.0),
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              labelText: "Nombre de la dirección",
-                            ),
-                            textInputAction: TextInputAction.done,
-                            focusNode: focus[4],
+                        textInputAction: TextInputAction.next,
+                        focusNode: focus[3],
+                        onSubmitted: (v) =>
+                            FocusScope.of(context).requestFocus(focus[4]),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: Icon(Icons.home, color: Colors.black),
+                            iconSize: 40,
+                            onPressed: () => print("ME TOCARON"),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              RaisedButton(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
-                  color: Colors.orangeAccent,
-                  child: Text(
-                    "Agregar",
-                    style: TextStyle(color: Colors.white, fontSize: 24),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              controller: aliasController,
+                              style: TextStyle(fontSize: 16.0),
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                labelText: "Nombre de la dirección",
+                              ),
+                              textInputAction: TextInputAction.done,
+                              focusNode: focus[4],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  onPressed: () => print("Agregar")),
-            ],
-          );
-        } else {
-          return Center(
-            child: Text(state.toString()),
-          );
-        }
-      }),
+                ),
+                RaisedButton(
+                    padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+                    color: Colors.orangeAccent,
+                    child: Text(
+                      "Agregar",
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                    onPressed: () => print("Agregar")),
+              ],
+            );
+          } else
+            return Center(
+              child: Text(state.toString()),
+            );
+        },
+      ),
     );
+  }
+
+  bool validateRural(CityResponse cityResponse, int value) {
+    if (cityResponse.listpais[0].listdep[value].listciu.length <= 1) {
+      if (cityResponse.listpais[0].listdep[value].listciu[0].latlong != null) {
+        List<String> locationCity =
+            (cityResponse.listpais[0].listdep[value].listciu[0].latlong)
+                .split(",");
+        newPosition = LatLng(
+            double.parse(locationCity[0]), double.parse(locationCity[1]));
+        isRural = true;
+      } else {
+        print("LA PUTISIMA LNLG ES NULA");
+      }
+    } else {
+      isRural = false;
+    }
+    return isRural;
   }
 
   updatePosition(CameraPosition _position) {
@@ -349,8 +460,12 @@ class _RequesCityPageState extends State<RequesCityPage> {
       mainRoad = mainController.text;
       secondaryRoad = secondaryController.text;
       plaque = plaqueController.text;
-
-      logic.getLocation(city, typeRoad, mainRoad, secondaryRoad, plaque);
+      BlocProvider.of<CitysBloc>(context).add(GetLocationEvent(
+          city: city,
+          typeRoad: typeRoad,
+          mainRoad: mainRoad,
+          secondaryRoad: secondaryRoad,
+          plaque: plaque));
     }
   }
 

@@ -14,3 +14,10 @@ class SelectedCity {
 
   SelectedCity({this.i, this.nameCity});
 }
+
+class SelectedSUBCity {
+  final int i;
+  final String nameCity;
+
+  SelectedSUBCity({this.i, this.nameCity});
+}

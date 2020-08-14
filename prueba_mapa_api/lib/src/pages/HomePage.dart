@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prueba_mapa_api/src/bloc/blocCitys/blocExport.dart';
@@ -18,7 +20,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("prototipe"),
       ),
       body: BlocProvider<CitysBloc>(
-        create: (BuildContext context) => CitysBloc()..add(GetCityEvent()),
+        create: (BuildContext context) =>
+            CitysBloc()..add(UserSelectedCityEvent()),
         child: RequesCityPage(),
       ),
     );
