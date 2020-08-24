@@ -54,6 +54,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
       listdep2.clear();
     }
     if (cityResponse.listpais[0].listdep[value].listciu.length > 1) {
+      print("Varios");
       for (var i = 0;
           i < cityResponse.listpais[0].listdep[value].listciu.length;
           i++) {
@@ -62,7 +63,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
             nameCity:
                 cityResponse.listpais[0].listdep[value].listciu[i].nomciudad));
       }
-      print("ME LLAMARON ?");
+
       yield InitialState();
       yield UserSelectedCityState(
         cityResponse: cityResponse,
@@ -113,23 +114,23 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
   }
 
   Stream<CitysState> _mapMoveToCityToState(int valueDep, int valueCiu) async* {
-    idDep = valueDep;
     print("ENTRE AL SEGUNDO DR");
-    print(valueCiu);
     if (cityResponse.listpais[0].listdep[valueDep].listciu[valueCiu].latlong !=
         null) {
-      print("Si entre al auishdfauishdguipadefrg");
       List<String> locationCity =
-          (cityResponse.listpais[0].listdep[valueDep].listciu[0].latlong)
+          (cityResponse.listpais[0].listdep[valueDep].listciu[valueCiu].latlong)
               .split(",");
+      print(locationCity);
       newPosition =
           LatLng(double.parse(locationCity[0]), double.parse(locationCity[1]));
       yield InitialState();
-      yield LoadedCitysState(
-          idSelected: idDep,
-          setMapController: setMapController,
-          cityResponse: cityResponse,
-          listdep: listdep);
+      yield UserSelectedCityState(
+        cityResponse: cityResponse,
+        listdep2: listdep2,
+        listdep: listdep,
+        setMapController: setMapController,
+        isSecondDRenable: true,
+      );
     } else {
       print("LA PUTISIMA LNLG ES NULA");
     }

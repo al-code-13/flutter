@@ -44,6 +44,15 @@ class _RequesCityPageState extends State<RequesCityPage> {
   bool isRural = true;
 
   @override
+  void dispose() {
+    super.dispose();
+    Marker marker = _markers.firstWhere(
+        (p) => p.markerId == MarkerId('marker_1'),
+        orElse: () => null);
+    _markers.remove(marker);
+  }
+
+  @override
   Widget build(BuildContext context) {
     _markers.add(
       Marker(
@@ -75,9 +84,10 @@ class _RequesCityPageState extends State<RequesCityPage> {
               child: CircularProgressIndicator(),
             );
           } else if (state is UserSelectedCityState) {
-            return Column(children: [
-              Center(
-                child: Expanded(
+            return Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<SelectedCity>(
                       iconEnabledColor: Colors.black,
@@ -89,6 +99,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                       hint: Text("Selecciona"),
                       // SOLO UNA CIUDAD
                       onChanged: (SelectedCity value) {
+                        print(value.i);
                         BlocProvider.of<CitysBloc>(context)
                             .add(ActionUserSelect2DrEvent(value.i));
                         validateRural(state.cityResponse, value.i);
@@ -111,47 +122,46 @@ class _RequesCityPageState extends State<RequesCityPage> {
                     ),
                   ),
                 ),
-              ),
-              state.isSecondDRenable
-                  ? Center(
-                      child: Expanded(
-                          child: DropdownButtonHideUnderline(
-                        child: DropdownButton<SelectedSUBCity>(
-                          iconEnabledColor: Colors.black,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16.0,
+                state.isSecondDRenable
+                    ? Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<SelectedSUBCity>(
+                            iconEnabledColor: Colors.black,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                            ),
+                            value: selectedSUBCity,
+                            hint: Text("Selecciona"),
+                            // SELECCIONAR LA OTRA CIUDAD
+                            onChanged: (SelectedSUBCity value) {
+                              print(value.i);
+                              BlocProvider.of<CitysBloc>(context).add(
+                                  MoveToCityEvent(
+                                      valueDep: selectionUserCity.i,
+                                      valueCiu: value.i));
+                              selectedSUBCity = value;
+                              setState(() {});
+                            },
+                            items: state.listdep2.map((i) {
+                              return DropdownMenuItem(
+                                value: i,
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      i.nameCity,
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
                           ),
-                          value: selectedSUBCity,
-                          hint: Text("Selecciona"),
-                          // SELECCIONAR LA OTRA CIUDAD
-                          onChanged: (SelectedSUBCity value) {
-                            print(value.i);
-                            BlocProvider.of<CitysBloc>(context).add(
-                                MoveToCityEvent(
-                                    valueDep: selectionUserCity.i,
-                                    valueCiu: value.i));
-                            selectedSUBCity = value;
-                            setState(() {});
-                          },
-                          items: state.listdep2.map((i) {
-                            return DropdownMenuItem(
-                              value: i,
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    i.nameCity,
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
                         ),
-                      )),
-                    )
-                  : SizedBox()
-            ]);
+                      )
+                    : SizedBox()
+              ],
+            );
           } else if (state is LoadedCitysState) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -198,10 +208,16 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 value: selectionUserCity,
                                 hint: Text("Selecciona"),
                                 onChanged: (SelectedCity value) {
+                                  if (mainController.text.length > 1) {
+                                    mainController.clear();
+                                    secondaryController.clear();
+                                    plaqueController.clear();
+                                  }
                                   BlocProvider.of<CitysBloc>(context).add(
                                       MoveToCityEvent(
                                           valueDep: state.idSelected,
                                           valueCiu: value.i));
+
                                   selectionUserCity = value;
                                   setState(() {});
                                 },
