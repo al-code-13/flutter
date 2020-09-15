@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prueba_mapa_api/src/bloc/blocCitys/blocExport.dart';
@@ -16,13 +14,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("prototipe"),
-      ),
       body: BlocProvider<CitysBloc>(
         create: (BuildContext context) =>
             CitysBloc()..add(UserSelectedCityEvent()),
-        child: RequesCityPage(),
+        child: SafeArea(child: RequesCityPage()),
       ),
     );
   }

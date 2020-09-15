@@ -4,10 +4,10 @@
 
 import 'dart:convert';
 
-AddresResponse AddresResponseFromJson(String str) =>
+AddresResponse addresResponseFromJson(String str) =>
     AddresResponse.fromJson(json.decode(str));
 
-String AddresResponseToJson(AddresResponse data) => json.encode(data.toJson());
+String addresResponseToJson(AddresResponse data) => json.encode(data.toJson());
 
 class AddresResponse {
   AddresResponse({

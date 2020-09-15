@@ -18,7 +18,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
   GoogleMapController mycontroller;
   LatLng newPosition;
   int idDep;
-  CitysBloc() : super(InitialState());
+  CitysBloc() : super(LoadingState());
 
   @override
   Stream<CitysState> mapEventToState(
@@ -31,6 +31,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
       yield* _mapGetAllToState();
     }
     if (event is MoveToCityEvent) {
+      yield LoadingState();
       yield* _mapMoveToCityToState(event.valueDep, event.valueCiu);
     }
     if (event is GetLocationEvent) {
@@ -45,6 +46,9 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
     }
     if (event is ActionUserSelect2DrEvent) {
       yield* _mapActionUserSelect2DrToState(event.value);
+    }
+    if (event is GoToHome) {
+      yield UserSelectedCityState(isSecondDRenable: false);
     }
   }
 
@@ -64,14 +68,14 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
                 cityResponse.listpais[0].listdep[value].listciu[i].nomciudad));
       }
 
-      yield InitialState();
-      yield UserSelectedCityState(
-        cityResponse: cityResponse,
-        listdep2: listdep2,
-        listdep: listdep,
-        setMapController: setMapController,
-        isSecondDRenable: true,
-      );
+      yield LoadingState();
+      yield LoadedCitysState(
+          isSecondDRenable: true,
+          listdep2: listdep2,
+          idSelected: idDep,
+          setMapController: setMapController,
+          cityResponse: cityResponse,
+          listdep: listdep);
     } else {
       print("SOLO ES UNA");
       List<String> locationCity =
@@ -79,7 +83,10 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
               .split(",");
       newPosition =
           LatLng(double.parse(locationCity[0]), double.parse(locationCity[1]));
+      yield LoadingState();
       yield LoadedCitysState(
+          isSecondDRenable: false,
+          listdep2: null,
           idSelected: idDep,
           setMapController: setMapController,
           cityResponse: cityResponse,
@@ -87,34 +94,8 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
     }
   }
 
-  Stream<CitysState> _mapAddListSubCityToState(int value) async* {
-    idDep = value;
-    if (listdep2 != null) {
-      listdep2.clear();
-    }
-    if (cityResponse.listpais[0].listdep[value].listciu.length > 1) {
-      print(cityResponse.listpais[0].listdep[value].nombre);
-
-      for (var i = 0;
-          i < cityResponse.listpais[0].listdep[value].listciu.length;
-          i++) {
-        listdep2.add(SelectedSUBCity(
-            i: i,
-            nameCity:
-                cityResponse.listpais[0].listdep[value].listciu[i].nomciudad));
-      }
-      yield UserSelectedCityState(
-        cityResponse: cityResponse,
-        listdep2: listdep2,
-        listdep: listdep,
-        setMapController: setMapController,
-        isSecondDRenable: true,
-      );
-    }
-  }
-
   Stream<CitysState> _mapMoveToCityToState(int valueDep, int valueCiu) async* {
-    print("ENTRE AL SEGUNDO DR");
+    print("value dep $valueDep\n value ciu $valueCiu");
     if (cityResponse.listpais[0].listdep[valueDep].listciu[valueCiu].latlong !=
         null) {
       List<String> locationCity =
@@ -123,46 +104,89 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
       print(locationCity);
       newPosition =
           LatLng(double.parse(locationCity[0]), double.parse(locationCity[1]));
-      yield InitialState();
-      yield UserSelectedCityState(
+
+      yield LoadedCitysState(
+        isSecondDRenable: true,
+        setMapController: setMapController,
+        idSelected: idDep,
         cityResponse: cityResponse,
         listdep2: listdep2,
         listdep: listdep,
-        setMapController: setMapController,
-        isSecondDRenable: true,
       );
     } else {
       print("LA PUTISIMA LNLG ES NULA");
     }
   }
 
+  Stream<CitysState> _mapAddListSubCityToState(int value) async* {
+    idDep = value;
+    if (listdep2 == null || listdep2.isNotEmpty) {
+      if (cityResponse.listpais[0].listdep[value].listciu.length > 1) {
+        print(cityResponse.listpais[0].listdep[value].nombre);
+
+        for (var i = 0;
+            i < cityResponse.listpais[0].listdep[value].listciu.length;
+            i++) {
+          listdep2.add(SelectedSUBCity(
+              i: i,
+              nameCity: cityResponse
+                  .listpais[0].listdep[value].listciu[i].nomciudad));
+        }
+        yield UserSelectedCityState(
+          cityResponse: cityResponse,
+          listdep2: listdep2,
+          listdep: listdep,
+          setMapController: setMapController,
+          isSecondDRenable: true,
+        );
+      }
+    } else {
+      listdep2.clear();
+    }
+  }
+
   Stream<CitysState> _mapGetAllToState() async* {
-    var url = "https://domicilios.tiendasd1.com/api//citiesEst/127";
-    try {
-      var response = await http.get(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": "datoschefmenu"
-        },
-      );
-      cityResponse = CityResponse.fromJson(convert.json.decode(response.body));
-      if (cityResponse != null) {
-        for (var i = 0; i < cityResponse.listpais[0].listdep.length; i++) {
-          if (cityResponse.listpais[0].listdep.length != null) {
-            listdep.add(SelectedCity(
-                i: i, nameCity: cityResponse.listpais[0].listdep[i].nombre));
+    if (listdep2 != null) {
+      listdep2.clear();
+    }
+    print(listdep);
+    if (listdep == null || listdep.isEmpty) {
+      var url = "https://domicilios.tiendasd1.com/api//citiesEst/127";
+      try {
+        var response = await http.get(
+          url,
+          headers: {
+            "Content-Type": "application/json",
+            "authorization": "datoschefmenu"
+          },
+        );
+        cityResponse =
+            CityResponse.fromJson(convert.json.decode(response.body));
+        if (cityResponse != null) {
+          for (var i = 0; i < cityResponse.listpais[0].listdep.length; i++) {
+            if (cityResponse.listpais[0].listdep.length != null) {
+              listdep.add(SelectedCity(
+                  i: i, nameCity: cityResponse.listpais[0].listdep[i].nombre));
+            }
           }
         }
+        yield UserSelectedCityState(
+            listdep: listdep,
+            listdep2: listdep2,
+            isSecondDRenable: false,
+            setMapController: setMapController,
+            cityResponse: cityResponse);
+      } catch (e) {
+        print(e);
       }
+    } else {
+      print("vine aca");
       yield UserSelectedCityState(
           listdep: listdep,
           listdep2: listdep2,
           isSecondDRenable: false,
           setMapController: setMapController,
           cityResponse: cityResponse);
-    } catch (e) {
-      print(e);
     }
   }
 
@@ -219,10 +243,8 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
 
   setMapController(GoogleMapController controller) {
     mycontroller = controller;
-    print(mycontroller);
-    print(controller);
     if (newPosition != null) {
-      print(newPosition);
+      print("$newPosition  XDXDXD");
       controller.moveCamera(CameraUpdate.newLatLngZoom(newPosition, 18));
     }
   }

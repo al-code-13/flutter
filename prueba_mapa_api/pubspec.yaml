@@ -31,7 +31,7 @@ dependencies:
   google_maps_flutter: ^0.5.24+1
   http: ^0.12.2
   flutter_bloc: ^6.0.1
-  equatable: ^1.1.1
+  equatable: ^1.2.0
 
   
 dev_dependencies:

@@ -30,6 +30,8 @@ class MoveToCityEvent extends CitysEvent {
   MoveToCityEvent({this.valueCiu, this.valueDep});
 }
 
+class GoToHome extends CitysEvent {}
+
 class GetLocationEvent extends CitysEvent {
   final String city;
   final String typeRoad;
