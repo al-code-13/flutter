@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:prueba_mapa_api/src/models/GetAddress/AddressResponse.dart';
 import 'package:prueba_mapa_api/src/models/GetCitys/Citys_Response.dart';
@@ -19,20 +18,6 @@ class LoadingState extends CitysState {
 
 class UpdateMap extends CitysState {}
 
-class UserSelectedCityState extends CitysState {
-  final Function(GoogleMapController controller) setMapController;
-  final CityResponse cityResponse;
-  final bool isSecondDRenable;
-  final List<SelectedSUBCity> listdep2;
-  final List<SelectedCity> listdep;
-  UserSelectedCityState(
-      {this.isSecondDRenable,
-      this.listdep2,
-      this.cityResponse,
-      this.setMapController,
-      this.listdep});
-}
-
 class LoadedCitysState extends CitysState {
   final Function(GoogleMapController controller) setMapController;
   final CityResponse cityResponse;
@@ -42,16 +27,12 @@ class LoadedCitysState extends CitysState {
   final List<SelectedCity> listdep;
   LoadedCitysState(
       {this.listdep2,
-      @required this.isSecondDRenable,
-      @required this.idSelected,
-      @required this.setMapController,
-      @required this.cityResponse,
-      @required this.listdep});
+      this.isSecondDRenable,
+      this.idSelected,
+      this.setMapController,
+      this.cityResponse,
+      this.listdep});
 }
-
-class GetCityState extends CitysState {}
-
-class MainHomeState extends CitysState {}
 
 // ENVIO
 class GetLocationState extends CitysState {

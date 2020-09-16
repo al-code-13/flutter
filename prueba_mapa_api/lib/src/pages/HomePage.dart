@@ -15,8 +15,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider<CitysBloc>(
-        create: (BuildContext context) =>
-            CitysBloc()..add(UserSelectedCityEvent()),
+        create: (BuildContext context) => CitysBloc()..add(ShowMapEvent()),
         child: SafeArea(child: RequesCityPage()),
       ),
     );

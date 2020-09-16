@@ -8,15 +8,7 @@ abstract class CitysEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class GetCityEvent extends CitysEvent {}
-
-class UserSelectedCityEvent extends CitysEvent {}
-
-class UserSelectedSecondCityEvent extends CitysEvent {
-  final int value;
-
-  UserSelectedSecondCityEvent(this.value);
-}
+class ShowMapEvent extends CitysEvent {}
 
 class ActionUserSelect2DrEvent extends CitysEvent {
   final int value;
@@ -29,8 +21,6 @@ class MoveToCityEvent extends CitysEvent {
   final int valueCiu;
   MoveToCityEvent({this.valueCiu, this.valueDep});
 }
-
-class GoToHome extends CitysEvent {}
 
 class GetLocationEvent extends CitysEvent {
   final String city;
