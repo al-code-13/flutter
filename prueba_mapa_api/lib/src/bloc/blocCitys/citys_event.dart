@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:prueba_mapa_api/src/models/Road&type/Road_City.dart';
 
 abstract class CitysEvent extends Equatable {
   const CitysEvent();
@@ -12,14 +13,23 @@ class ShowMapEvent extends CitysEvent {}
 
 class ActionUserSelect2DrEvent extends CitysEvent {
   final int value;
+  final SelectedCity selectionUserCity;
+  final SelectedSUBCity selectedSUBCity;
 
-  ActionUserSelect2DrEvent(this.value);
+  ActionUserSelect2DrEvent(
+      {this.selectionUserCity, this.selectedSUBCity, this.value});
 }
 
 class MoveToCityEvent extends CitysEvent {
   final int valueDep;
   final int valueCiu;
-  MoveToCityEvent({this.valueCiu, this.valueDep});
+  final SelectedCity selectionUserCity;
+  final SelectedSUBCity selectedSUBCity;
+  MoveToCityEvent(
+      {this.selectionUserCity,
+      this.selectedSUBCity,
+      this.valueCiu,
+      this.valueDep});
 }
 
 class GetLocationEvent extends CitysEvent {

@@ -25,8 +25,12 @@ class LoadedCitysState extends CitysState {
   final bool isSecondDRenable;
   final List<SelectedSUBCity> listdep2;
   final List<SelectedCity> listdep;
+  final SelectedCity selectionUserCity;
+  final SelectedSUBCity selectedSUBCity;
   LoadedCitysState(
-      {this.listdep2,
+      {this.selectionUserCity,
+      this.selectedSUBCity,
+      this.listdep2,
       this.isSecondDRenable,
       this.idSelected,
       this.setMapController,

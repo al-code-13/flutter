@@ -35,8 +35,6 @@ class _RequesCityPageState extends State<RequesCityPage> {
   CameraPosition positioned;
 
   final List<FocusNode> focus = List.generate(5, (i) => FocusNode());
-  SelectedCity selectionUserCity;
-  SelectedSUBCity selectedSUBCity;
 
   @override
   void dispose() {
@@ -122,7 +120,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                   color: Colors.black,
                                   fontSize: 16.0,
                                 ),
-                                value: selectionUserCity,
+                                value: state.selectionUserCity,
                                 hint: Text("Selecciona"),
                                 onChanged: (SelectedCity value) {
                                   if (mainController.text.length > 1) {
@@ -130,10 +128,13 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                     secondaryController.clear();
                                     plaqueController.clear();
                                   }
-                                  BlocProvider.of<CitysBloc>(context)
-                                      .add(ActionUserSelect2DrEvent(value.i));
 
-                                  selectionUserCity = value;
+                                  BlocProvider.of<CitysBloc>(context).add(
+                                      ActionUserSelect2DrEvent(
+                                          value: value.i,
+                                          selectedSUBCity: null,
+                                          selectionUserCity: value));
+
                                   setState(() {});
                                 },
                                 items: state.listdep.map((i) {
@@ -170,7 +171,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                   color: Colors.black,
                                   fontSize: 16.0,
                                 ),
-                                value: selectedSUBCity,
+                                value: state.selectedSUBCity,
                                 hint: Text("Selecciona"),
                                 onChanged: (SelectedSUBCity value) {
                                   if (mainController.text.length > 1) {
@@ -181,9 +182,11 @@ class _RequesCityPageState extends State<RequesCityPage> {
 
                                   BlocProvider.of<CitysBloc>(context).add(
                                       MoveToCityEvent(
-                                          valueDep: selectionUserCity.i,
+                                          selectedSUBCity: value,
+                                          selectionUserCity:
+                                              state.selectionUserCity,
+                                          valueDep: state.selectionUserCity.i,
                                           valueCiu: value.i));
-                                  selectedSUBCity = value;
                                   setState(() {});
                                 },
                                 items: state.listdep2.map((i) {
