@@ -22,6 +22,7 @@ class LoadedCitysState extends CitysState {
   final Function(GoogleMapController controller) setMapController;
   final CityResponse cityResponse;
   final int idSelected;
+  final int idMapSelected;
   final bool isSecondDRenable;
   final List<SelectedSUBCity> listdep2;
   final List<SelectedCity> listdep;
@@ -30,6 +31,7 @@ class LoadedCitysState extends CitysState {
   LoadedCitysState(
       {this.selectionUserCity,
       this.selectedSUBCity,
+      this.idMapSelected,
       this.listdep2,
       this.isSecondDRenable,
       this.idSelected,

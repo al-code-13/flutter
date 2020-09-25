@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:prueba_mapa_api/src/models/GetAddress/AddressRequest.dart';
 import 'package:prueba_mapa_api/src/models/GetAddress/AddressResponse.dart';
@@ -46,7 +47,8 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
           event.mainRoad, event.secondaryRoad, event.plaque);
     }
     if (event is GetAddressLocationEvent) {
-      yield* _mapGetAddressLocationToState(event.position);
+      yield* _mapGetAddressLocationToState(
+          position: event.position, selectionUserCity: event.selectionUserCity);
     }
   }
 
@@ -188,6 +190,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
             );
             cityResponse =
                 CityResponse.fromJson(convert.json.decode(response.body));
+
             if (cityResponse != null) {
               for (var i = 0;
                   i < cityResponse.listpais[0].listdep.length;
@@ -257,7 +260,8 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
 // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   Stream<CitysState> _mapGetAddresResponseToState(String city, String typeRoad,
       String mainRoad, String secondaryRoad, String plaque) async* {
-    var url = "https://shielded-atoll-43694.herokuapp.com/searchAddress";
+    var url =
+        "https://d1-ecommerce-test.chefmenu.com.co/api/v1/geo/search-address";
     AddresRequest values = AddresRequest(
         city: city,
         typeRoad: typeRoad,
@@ -272,6 +276,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
           body: values.toRawJson());
       var rtaParseada =
           AddresResponse.fromJson(convert.json.decode(response.body));
+      print("Response => ${rtaParseada.toJson()}");
       newPosition =
           LatLng(rtaParseada.coordinates.lat, rtaParseada.coordinates.lng);
       setMapController(mycontroller);
@@ -282,24 +287,64 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
   }
 
   Stream<CitysState> _mapGetAddressLocationToState(
-      CameraPosition position) async* {
-    var url = "https://shielded-atoll-43694.herokuapp.com/currentLocation";
+      {SelectedCity selectionUserCity, CameraPosition position}) async* {
+    bool hasCoverage = false;
+    var url =
+        "https://d1-ecommerce-test.chefmenu.com.co/api/v1/geo/current-location";
     LocationRequest values = LocationRequest(
         latitud: position.target.latitude, longitud: position.target.longitude);
-
     try {
       var response = await http.post(url,
           headers: {
             "Content-Type": "application/json",
           },
           body: values.toRawJson());
-      var rtaParseada =
-          LocationResponse.fromJson(convert.json.decode(response.body));
+      LocationResponse rtaParseada;
+      if (response.body.isNotEmpty) {
+        rtaParseada =
+            LocationResponse.fromJson(convert.json.decode(response.body));
+      } else {
+        print("si viene null");
+      }
+
+      hasCoverage = validateCityDR(rtaParseada.city, cityResponse);
       yield UpdateMap();
       yield UpdateMoveCameraState(rtaParseada);
+      // if (hasCoverage) {
+      //   print("asdasd");
+      //   yield LoadingState();
+      //   yield LoadedCitysState(
+      //       idSelected: idDep,
+      //       listdep: listdep,
+      //       listdep2: listdep2,
+      //       isSecondDRenable: false,
+      //       setMapController: setMapController,
+      //       cityResponse: cityResponse);
+      // }
     } catch (e) {
       print(e);
     }
+  }
+
+  validateCityDR(String city, CityResponse cityResponse) {
+    bool validation = false;
+    print("Response 1 => $city");
+    List<Listdep> listCiudades = cityResponse.listpais[0].listdep;
+    for (var i = 0; i < listCiudades.length; i++) {
+      if (removeDiacritics(listCiudades[i].nombre)
+          .contains(removeDiacritics(city))) {
+        validation = true;
+      } else {
+        for (var j = 0; j < listCiudades[i].listciu.length; j++) {
+          if (removeDiacritics(listCiudades[i].listciu[j].nomciudad)
+              .contains(removeDiacritics(city))) {
+            validation = true;
+          }
+        }
+      }
+    }
+
+    return validation;
   }
 
   setMapController(GoogleMapController controller) {

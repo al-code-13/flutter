@@ -48,7 +48,10 @@ class GetLocationEvent extends CitysEvent {
 }
 
 class GetAddressLocationEvent extends CitysEvent {
+  final SelectedCity selectionUserCity;
+  final SelectedSUBCity selectedSUBCity;
   final CameraPosition position;
 
-  GetAddressLocationEvent({this.position});
+  GetAddressLocationEvent(
+      {this.selectionUserCity, this.selectedSUBCity, this.position});
 }

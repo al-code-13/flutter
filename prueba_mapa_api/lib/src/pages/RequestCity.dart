@@ -71,7 +71,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
               state is! GetLocationState);
         },
         builder: (context, state) {
-          print(state);
+          //  print(state);
           if (state is LoadingState) {
             return Center(
               child: CircularProgressIndicator(),
@@ -91,8 +91,10 @@ class _RequesCityPageState extends State<RequesCityPage> {
                     myLocationButtonEnabled: true,
                     onCameraIdle: () async {
                       if (positioned != null) {
-                        BlocProvider.of<CitysBloc>(context)
-                            .add(GetAddressLocationEvent(position: positioned));
+                        BlocProvider.of<CitysBloc>(context).add(
+                            GetAddressLocationEvent(
+                                position: positioned,
+                                selectionUserCity: state.selectionUserCity));
                       }
                     },
                     onCameraMove: ((_position) {
@@ -217,7 +219,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                               ),
                               value: selectedRoad,
                               onChanged: (TypeRoad value) {
-                                validateAddress();
+                                validateAddress(state.selectionUserCity);
                                 selectedRoad = value;
                                 setState(() {});
                               },
@@ -248,7 +250,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 labelText: "Numero",
                               ),
                               onChanged: (_) {
-                                validateAddress();
+                                validateAddress(state.selectionUserCity);
                                 setState(() {});
                               },
                               textInputAction: TextInputAction.next,
@@ -281,7 +283,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 labelText: "Numero",
                               ),
                               onChanged: (_) {
-                                validateAddress();
+                                validateAddress(state.selectionUserCity);
                                 setState(() {});
                               },
                               textInputAction: TextInputAction.next,
@@ -314,7 +316,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 labelText: "Placa",
                               ),
                               onChanged: (_) {
-                                validateAddress();
+                                validateAddress(state.selectionUserCity);
                                 setState(() {});
                               },
                               textInputAction: TextInputAction.next,
@@ -401,18 +403,17 @@ class _RequesCityPageState extends State<RequesCityPage> {
     );
   }
 
-  validateAddress() {
+  validateAddress(SelectedCity selectionUserCity) {
     String city;
     String typeRoad;
     String mainRoad;
     String secondaryRoad;
     String plaque;
-    print("SI VINE LOKA");
     if (mainController.text != "" &&
         secondaryController.text != "" &&
         selectedRoad.type != null &&
         plaqueController.text != "") {
-      city = "Bogota";
+      city = selectionUserCity.nameCity;
       typeRoad = selectedRoad.type;
       mainRoad = mainController.text;
       secondaryRoad = secondaryController.text;
