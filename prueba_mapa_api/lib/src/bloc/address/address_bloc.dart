@@ -12,7 +12,7 @@ import 'blocExport.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
-class CitysBloc extends Bloc<CitysEvent, CitysState> {
+class AddressBloc extends Bloc<AddressEvent, AddressState> {
   CityResponse cityResponse;
   List<SelectedCity> listdep = [];
   List<SelectedSUBCity> listdep2 = [];
@@ -20,11 +20,11 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
   LatLng newPosition;
 
   int idDep;
-  CitysBloc() : super(LoadingState());
+  AddressBloc() : super(LoadingState());
 
   @override
-  Stream<CitysState> mapEventToState(
-    CitysEvent event,
+  Stream<AddressState> mapEventToState(
+    AddressEvent event,
   ) async* {
     if (event is ShowMapEvent) {
       yield* _mapGetAllToState();
@@ -52,9 +52,9 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
     }
   }
 
-  Stream<CitysState> _mapActionUserSelect2DrToState({
+  Stream<AddressState> _mapActionUserSelect2DrToState({
     int value,
-    SelectedCity selectionUserCity,
+    int selectionUserCity,
     SelectedSUBCity selectedSUBCity,
   }) async* {
     try {
@@ -70,8 +70,8 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
                     .listpais[0].listdep[value].listciu[i].nomciudad));
           }
           yield LoadingState();
-          yield LoadedCitysState(
-              selectedSUBCity: selectedSUBCity,
+          yield LoadedAddressState(
+              selectedSUBCity: null,
               selectionUserCity: selectionUserCity,
               isSecondDRenable: true,
               listdep2: listdep2,
@@ -85,10 +85,10 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
                   .split(",");
           newPosition = LatLng(
               double.parse(locationCity[0]), double.parse(locationCity[1]));
-          setMapController(mycontroller);
+          await setMapController(mycontroller);
           yield LoadingState();
-          yield LoadedCitysState(
-              selectedSUBCity: selectedSUBCity,
+          yield LoadedAddressState(
+              selectedSUBCity: null,
               selectionUserCity: selectionUserCity,
               setMapController: setMapController,
               isSecondDRenable: false,
@@ -109,8 +109,8 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
                     .listpais[0].listdep[value].listciu[i].nomciudad));
           }
           yield LoadingState();
-          yield LoadedCitysState(
-              selectedSUBCity: selectedSUBCity,
+          yield LoadedAddressState(
+              selectedSUBCity: null,
               selectionUserCity: selectionUserCity,
               isSecondDRenable: true,
               listdep2: listdep2,
@@ -126,8 +126,8 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
               double.parse(locationCity[0]), double.parse(locationCity[1]));
           setMapController(mycontroller);
           yield LoadingState();
-          yield LoadedCitysState(
-              selectedSUBCity: selectedSUBCity,
+          yield LoadedAddressState(
+              selectedSUBCity: null,
               selectionUserCity: selectionUserCity,
               setMapController: setMapController,
               isSecondDRenable: false,
@@ -142,11 +142,11 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
     }
   }
 
-  Stream<CitysState> _mapMoveToCityToState({
+  Stream<AddressState> _mapMoveToCityToState({
     int valueDep,
     int valueCiu,
-    SelectedCity selectionUserCity,
-    SelectedSUBCity selectedSUBCity,
+    int selectionUserCity,
+    int selectedSUBCity,
   }) async* {
     try {
       if (cityResponse
@@ -157,9 +157,9 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
             .split(",");
         newPosition = LatLng(
             double.parse(locationCity[0]), double.parse(locationCity[1]));
-        setMapController(mycontroller);
+        await setMapController(mycontroller);
         yield LoadingState();
-        yield LoadedCitysState(
+        yield LoadedAddressState(
           selectedSUBCity: selectedSUBCity,
           selectionUserCity: selectionUserCity,
           isSecondDRenable: true,
@@ -175,7 +175,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
     }
   }
 
-  Stream<CitysState> _mapGetAllToState() async* {
+  Stream<AddressState> _mapGetAllToState() async* {
     try {
       if (listdep2.isEmpty) {
         if (listdep.isEmpty) {
@@ -203,7 +203,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
               }
             }
             yield LoadingState();
-            yield LoadedCitysState(
+            yield LoadedAddressState(
                 idSelected: idDep,
                 listdep: listdep,
                 listdep2: listdep2,
@@ -240,7 +240,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
               }
             }
             yield LoadingState();
-            yield LoadedCitysState(
+            yield LoadedAddressState(
                 idSelected: idDep,
                 listdep: listdep,
                 listdep2: listdep2,
@@ -258,12 +258,12 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
   }
 
 // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-  Stream<CitysState> _mapGetAddresResponseToState(String city, String typeRoad,
+  Stream<AddressState> _mapGetAddresResponseToState(int city, String typeRoad,
       String mainRoad, String secondaryRoad, String plaque) async* {
     var url =
         "https://d1-ecommerce-test.chefmenu.com.co/api/v1/geo/search-address";
     AddresRequest values = AddresRequest(
-        city: city,
+        city: listdep[city].nameCity,
         typeRoad: typeRoad,
         mainRoad: mainRoad,
         secondaryRoad: secondaryRoad,
@@ -286,8 +286,8 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
     }
   }
 
-  Stream<CitysState> _mapGetAddressLocationToState(
-      {SelectedCity selectionUserCity, CameraPosition position}) async* {
+  Stream<AddressState> _mapGetAddressLocationToState(
+      {int selectionUserCity, CameraPosition position}) async* {
     bool hasCoverage = false;
     var url =
         "https://d1-ecommerce-test.chefmenu.com.co/api/v1/geo/current-location";
@@ -313,7 +313,7 @@ class CitysBloc extends Bloc<CitysEvent, CitysState> {
       // if (hasCoverage) {
       //   print("asdasd");
       //   yield LoadingState();
-      //   yield LoadedCitysState(
+      //   yield LoadedAddressState(
       //       idSelected: idDep,
       //       listdep: listdep,
       //       listdep2: listdep2,

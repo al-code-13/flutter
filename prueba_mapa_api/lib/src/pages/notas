@@ -21,7 +21,7 @@ notas
           //               // SOLO UNA CIUDAD
           //               onChanged: (SelectedCity value) {
           //                 print(value.i);
-          //                 BlocProvider.of<CitysBloc>(context)
+          //                 BlocProvider.of<AddressBloc>(context)
           //                     .add(ActionUserSelect2DrEvent(value.i));
           //                 selectionUserCity = value;
           //                 setState(() {});
@@ -56,7 +56,7 @@ notas
           //                     // SELECCIONAR LA OTRA CIUDAD
           //                     onChanged: (SelectedSUBCity value) {
           //                       print(value.i);
-          //                       BlocProvider.of<CitysBloc>(context).add(
+          //                       BlocProvider.of<AddressBloc>(context).add(
           //                           MoveToCityEvent(
           //                               valueDep: selectionUserCity.i,
           //                               valueCiu: value.i));
@@ -86,7 +86,7 @@ notas
           // }
 
 
-            // else if (state is LoadedSecondCitysState) {
+            // else if (state is LoadedSecondAddressState) {
           //   // DOS CIUDADES
           //   return Scaffold(
           //     appBar: AppBar(
@@ -94,7 +94,7 @@ notas
           //         leading: IconButton(
           //           icon: Icon(Icons.arrow_back),
           //           onPressed: () {
-          //             BlocProvider.of<CitysBloc>(context)
+          //             BlocProvider.of<AddressBloc>(context)
           //                 .add(UserSelectedCityEvent());
           //           },
           //         )),
@@ -114,7 +114,7 @@ notas
           //               myLocationButtonEnabled: true,
           //               onCameraIdle: () async {
           //                 if (positioned != null) {
-          //                   BlocProvider.of<CitysBloc>(context).add(
+          //                   BlocProvider.of<AddressBloc>(context).add(
           //                       GetAddressLocationEvent(position: positioned));
           //                 }
           //               },
@@ -154,7 +154,7 @@ notas
           //                             }
           //                             selectionUserCity = value;
           //                             setState(() {});
-          //                             BlocProvider.of<CitysBloc>(context).add(
+          //                             BlocProvider.of<AddressBloc>(context).add(
           //                                 ActionUserSelect2DrEvent(value.i));
           //                           },
           //                           items: state.listdep.map((i) {
@@ -203,7 +203,7 @@ notas
           //                           }
           //                           selectedSUBCity = value;
           //                           setState(() {});
-          //                           BlocProvider.of<CitysBloc>(context).add(
+          //                           BlocProvider.of<AddressBloc>(context).add(
           //                               MoveToCityEvent(
           //                                   valueDep: selectionUserCity.i,
           //                                   valueCiu: value.i));
@@ -422,7 +422,7 @@ notas
   //   }
   //   return isRural;
   // }
-  // Stream<CitysState> _mapAddListSubCityToState(int value) async* {
+  // Stream<AddressState> _mapAddListSubCityToState(int value) async* {
   //   idDep = value;
   //   if (listdep2 == null || listdep2.isNotEmpty) {
   //     if (cityResponse.listpais[0].listdep[value].listciu.length > 1) {
@@ -437,7 +437,7 @@ notas
   //                 .listpais[0].listdep[value].listciu[i].nomciudad));
   //       }
   //       yield LoadingState();
-  //       yield LoadedCitysState(
+  //       yield LoadedAddressState(
   //         isSecondDRenable: true,
   //         setMapController: setMapController,
   //         idSelected: idDep,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:prueba_mapa_api/src/bloc/blocCitys/blocExport.dart';
+import 'package:prueba_mapa_api/src/bloc/address/blocExport.dart';
 import 'package:prueba_mapa_api/src/pages/RequestCity.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -14,8 +14,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocProvider<CitysBloc>(
-        create: (BuildContext context) => CitysBloc()..add(ShowMapEvent()),
+      body: BlocProvider<AddressBloc>(
+        create: (BuildContext context) => AddressBloc()..add(ShowMapEvent()),
         child: SafeArea(child: RequesCityPage()),
       ),
     );

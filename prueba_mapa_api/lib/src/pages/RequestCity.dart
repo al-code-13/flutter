@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:prueba_mapa_api/src/bloc/blocCitys/blocExport.dart';
+import 'package:prueba_mapa_api/src/bloc/address/blocExport.dart';
+
 import 'package:prueba_mapa_api/src/models/GetLocation/locationResponse.dart';
 import 'package:prueba_mapa_api/src/models/Road&type/Road_City.dart';
 
@@ -56,7 +57,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
       ),
     );
 
-    return BlocListener<CitysBloc, CitysState>(
+    return BlocListener<AddressBloc, AddressState>(
       listener: (BuildContext context, state) {
         if (state is UpdateMoveCameraState) {
           if (state.locationResponse != null) {
@@ -64,7 +65,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
           }
         }
       },
-      child: BlocBuilder<CitysBloc, CitysState>(
+      child: BlocBuilder<AddressBloc, AddressState>(
         buildWhen: (_, state) {
           return (state is! UpdateMoveCameraState &&
               state is! UpdateMap &&
@@ -76,7 +77,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
             return Center(
               child: CircularProgressIndicator(),
             );
-          } else if (state is LoadedCitysState) {
+          } else if (state is LoadedAddressState) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -91,7 +92,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                     myLocationButtonEnabled: true,
                     onCameraIdle: () async {
                       if (positioned != null) {
-                        BlocProvider.of<CitysBloc>(context).add(
+                        BlocProvider.of<AddressBloc>(context).add(
                             GetAddressLocationEvent(
                                 position: positioned,
                                 selectionUserCity: state.selectionUserCity));
@@ -116,7 +117,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                           // CIUDAD PRINCIPAL
                           Expanded(
                             child: DropdownButtonHideUnderline(
-                              child: DropdownButton<SelectedCity>(
+                              child: DropdownButton<int>(
                                 iconEnabledColor: Colors.black,
                                 style: TextStyle(
                                   color: Colors.black,
@@ -124,16 +125,18 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 ),
                                 value: state.selectionUserCity,
                                 hint: Text("Selecciona"),
-                                onChanged: (SelectedCity value) {
+                                onChanged: (int value) {
+                                  // _changedCity(newValue);
                                   if (mainController.text.length > 1) {
                                     mainController.clear();
                                     secondaryController.clear();
                                     plaqueController.clear();
                                   }
+                                  print(value);
 
-                                  BlocProvider.of<CitysBloc>(context).add(
+                                  BlocProvider.of<AddressBloc>(context).add(
                                       ActionUserSelect2DrEvent(
-                                          value: value.i,
+                                          value: value,
                                           selectedSUBCity: null,
                                           selectionUserCity: value));
 
@@ -141,7 +144,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 },
                                 items: state.listdep.map((i) {
                                   return DropdownMenuItem(
-                                    value: i,
+                                    value: i.i,
                                     child: Row(
                                       children: <Widget>[
                                         Text(
@@ -167,7 +170,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                       //SEGUNDA CIUDAD
                       state.isSecondDRenable
                           ? DropdownButtonHideUnderline(
-                              child: DropdownButton<SelectedSUBCity>(
+                              child: DropdownButton<int>(
                                 iconEnabledColor: Colors.black,
                                 style: TextStyle(
                                   color: Colors.black,
@@ -175,25 +178,25 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 ),
                                 value: state.selectedSUBCity,
                                 hint: Text("Selecciona"),
-                                onChanged: (SelectedSUBCity value) {
+                                onChanged: (int value) {
                                   if (mainController.text.length > 1) {
                                     mainController.clear();
                                     secondaryController.clear();
                                     plaqueController.clear();
                                   }
 
-                                  BlocProvider.of<CitysBloc>(context).add(
+                                  BlocProvider.of<AddressBloc>(context).add(
                                       MoveToCityEvent(
                                           selectedSUBCity: value,
                                           selectionUserCity:
                                               state.selectionUserCity,
-                                          valueDep: state.selectionUserCity.i,
-                                          valueCiu: value.i));
+                                          valueDep: state.selectionUserCity,
+                                          valueCiu: value));
                                   setState(() {});
                                 },
                                 items: state.listdep2.map((i) {
                                   return DropdownMenuItem(
-                                    value: i,
+                                    value: i.i,
                                     child: Row(
                                       children: <Widget>[
                                         Text(
@@ -219,7 +222,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                               ),
                               value: selectedRoad,
                               onChanged: (TypeRoad value) {
-                                validateAddress(state.selectionUserCity);
+                                //validateAddress(state.selectionUserCity);
                                 selectedRoad = value;
                                 setState(() {});
                               },
@@ -250,7 +253,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 labelText: "Numero",
                               ),
                               onChanged: (_) {
-                                validateAddress(state.selectionUserCity);
+                                //validateAddress(state.selectionUserCity);
                                 setState(() {});
                               },
                               textInputAction: TextInputAction.next,
@@ -283,7 +286,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 labelText: "Numero",
                               ),
                               onChanged: (_) {
-                                validateAddress(state.selectionUserCity);
+                                // validateAddress(state.selectionUserCity);
                                 setState(() {});
                               },
                               textInputAction: TextInputAction.next,
@@ -316,7 +319,7 @@ class _RequesCityPageState extends State<RequesCityPage> {
                                 labelText: "Placa",
                               ),
                               onChanged: (_) {
-                                validateAddress(state.selectionUserCity);
+                                //   validateAddress(state.selectionUserCity);
                                 setState(() {});
                               },
                               textInputAction: TextInputAction.next,
@@ -373,10 +376,18 @@ class _RequesCityPageState extends State<RequesCityPage> {
                     padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
                     color: Colors.orangeAccent,
                     child: Text(
-                      "Agregar",
+                      mainController.text != "" &&
+                              secondaryController.text != "" &&
+                              selectedRoad.type != null &&
+                              plaqueController.text != ""
+                          ? "Agregar"
+                          : "Buscar",
                       style: TextStyle(color: Colors.white, fontSize: 24),
                     ),
-                    onPressed: () => print("Agregar")),
+                    onPressed: () {
+                      //validateAddress(state.selectionUserCity);
+                      print(mainController.text);
+                    }),
               ],
             );
           }
@@ -403,8 +414,8 @@ class _RequesCityPageState extends State<RequesCityPage> {
     );
   }
 
-  validateAddress(SelectedCity selectionUserCity) {
-    String city;
+  validateAddress(int selectionUserCity) {
+    int city;
     String typeRoad;
     String mainRoad;
     String secondaryRoad;
@@ -413,12 +424,12 @@ class _RequesCityPageState extends State<RequesCityPage> {
         secondaryController.text != "" &&
         selectedRoad.type != null &&
         plaqueController.text != "") {
-      city = selectionUserCity.nameCity;
+      city = selectionUserCity;
       typeRoad = selectedRoad.type;
       mainRoad = mainController.text;
       secondaryRoad = secondaryController.text;
       plaque = plaqueController.text;
-      BlocProvider.of<CitysBloc>(context).add(GetLocationEvent(
+      BlocProvider.of<AddressBloc>(context).add(GetLocationEvent(
           city: city,
           typeRoad: typeRoad,
           mainRoad: mainRoad,

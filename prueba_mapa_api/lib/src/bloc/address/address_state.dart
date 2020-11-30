@@ -5,20 +5,20 @@ import 'package:prueba_mapa_api/src/models/GetCitys/Citys_Response.dart';
 import 'package:prueba_mapa_api/src/models/GetLocation/locationResponse.dart';
 import 'package:prueba_mapa_api/src/models/Road&type/Road_City.dart';
 
-abstract class CitysState extends Equatable {
-  const CitysState();
+abstract class AddressState extends Equatable {
+  const AddressState();
 
   @override
   List<Object> get props => [];
 }
 
-class LoadingState extends CitysState {
+class LoadingState extends AddressState {
   String toString() => 'Satisfactorio  LA PUTASIMA CARGA';
 }
 
-class UpdateMap extends CitysState {}
+class UpdateMap extends AddressState {}
 
-class LoadedCitysState extends CitysState {
+class LoadedAddressState extends AddressState {
   final Function(GoogleMapController controller) setMapController;
   final CityResponse cityResponse;
   final int idSelected;
@@ -26,9 +26,9 @@ class LoadedCitysState extends CitysState {
   final bool isSecondDRenable;
   final List<SelectedSUBCity> listdep2;
   final List<SelectedCity> listdep;
-  final SelectedCity selectionUserCity;
-  final SelectedSUBCity selectedSUBCity;
-  LoadedCitysState(
+  final int selectionUserCity;
+  final int selectedSUBCity;
+  LoadedAddressState(
       {this.selectionUserCity,
       this.selectedSUBCity,
       this.idMapSelected,
@@ -41,20 +41,20 @@ class LoadedCitysState extends CitysState {
 }
 
 // ENVIO
-class GetLocationState extends CitysState {
+class GetLocationState extends AddressState {
   final AddresResponse addresResponse;
 
   GetLocationState(this.addresResponse);
 }
 
 //  ENVIO COORDENADAS LLEGA DIRECCION
-class GetAddressLocationState extends CitysState {
+class GetAddressLocationState extends AddressState {
   final LocationResponse locationResponse;
 
   GetAddressLocationState(this.locationResponse);
 }
 
-class UpdateMoveCameraState extends CitysState {
+class UpdateMoveCameraState extends AddressState {
   final LocationResponse locationResponse;
   UpdateMoveCameraState(this.locationResponse);
 }
